@@ -58,7 +58,7 @@ func cleanAndExit(code int) {
 }
 
 func acceptConnections(route Route, ln net.Listener) {
-	log.Printf("start tcp listening for %#v", route)
+	log.Printf("start tcp listening for %v", route)
 	for {
 		conn, err := ln.Accept()
 		if err != nil {

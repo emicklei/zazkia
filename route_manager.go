@@ -8,7 +8,7 @@ type routeManager struct {
 
 func (m routeManager) routeForRemoteAddress(addr string) (Route, error) {
 	for _, each := range m.routes {
-		if each.TargetDomain == addr {
+		if each.ServiceDomain == addr {
 			return each, nil
 		}
 	}

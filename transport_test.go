@@ -8,10 +8,10 @@ import (
 
 func Test_transport(t *testing.T) {
 	l := new(link)
-	l.receivingFromClient = true
-	l.receivingFromService = true
-	l.sendingToClient = true
-	l.sendingToService = true
+	l.transport.ReceivingFromClient = true
+	l.transport.ReceivingFromService = true
+	l.transport.SendingToClient = true
+	l.transport.SendingToService = true
 	r := strings.NewReader("abcdefghij")
 	w := new(bytes.Buffer)
 	transport(l, w, r, ReadsFromService)
@@ -22,10 +22,10 @@ func Test_transport(t *testing.T) {
 
 func Test_transport_no_send_service(t *testing.T) {
 	l := new(link)
-	l.receivingFromClient = true
-	l.receivingFromService = true
-	l.sendingToClient = false
-	l.sendingToService = true
+	l.transport.ReceivingFromClient = true
+	l.transport.ReceivingFromService = true
+	l.transport.SendingToClient = false
+	l.transport.SendingToService = true
 	r := strings.NewReader("abcdefghij")
 	w := new(bytes.Buffer)
 	transport(l, w, r, ReadsFromService)
@@ -40,10 +40,10 @@ func Test_transport_small_buffer(t *testing.T) {
 		TransportBufferSize = 32 * 1024
 	}()
 	l := new(link)
-	l.receivingFromClient = true
-	l.receivingFromService = true
-	l.sendingToClient = true
-	l.sendingToService = true
+	l.transport.ReceivingFromClient = true
+	l.transport.ReceivingFromService = true
+	l.transport.SendingToClient = true
+	l.transport.SendingToService = true
 	r := strings.NewReader("abcdefghij")
 	w := new(bytes.Buffer)
 	transport(l, w, r, ReadsFromService)

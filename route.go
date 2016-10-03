@@ -7,14 +7,15 @@ import (
 )
 
 type Route struct {
-	Label        string
-	TargetDomain string `json:"target-domain"`
-	TargetPort   int    `json:"target-port"`
-	ListenPort   int    `json:"listen-port"`
+	Label         string
+	ServiceDomain string          `json:"service-domain"`
+	ServicePort   int             `json:"service-port"`
+	ListenPort    int             `json:"listen-port"`
+	Transport     *TransportState `json:"transport"`
 }
 
-type LinkState struct {
-	DelayTargetResponse  int  `json:"delay-target-response"`
+type TransportState struct {
+	DelayServiceResponse int  `json:"delay-service-response"`
 	SendingToClient      bool `json:"sending-to-client"`
 	ReceivingFromClient  bool `json:"receiving-from-client"`
 	SendingToService     bool `json:"sending-to-service"`
@@ -32,5 +33,18 @@ func readRoutes() (routes []Route, err error) {
 }
 
 func (r Route) tcp() string {
-	return fmt.Sprintf("%s:%d", r.TargetDomain, r.TargetPort)
+	return fmt.Sprintf("%s:%d", r.ServiceDomain, r.ServicePort)
+}
+
+func (r Route) hasTransportState() bool {
+	return r.Transport != nil
+}
+
+func (r Route) String() string {
+	return fmt.Sprintf("[%s] :%d <-> %s:%d {%v}", r.Label, r.ListenPort, r.ServiceDomain, r.ServicePort, r.Transport)
+}
+
+func (s TransportState) String() string {
+	return fmt.Sprintf("delay=%d,s2c=%v,rfc=%v,s2s=%v,rfs=%v",
+		s.DelayServiceResponse, s.SendingToClient, s.ReceivingFromClient, s.SendingToService, s.ReceivingFromService)
 }

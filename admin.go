@@ -34,8 +34,8 @@ func commandHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		link := linkMgr.get(id)
 		if link != nil {
-			link.sendingToClient = !link.sendingToClient
-			link.sendingToService = !link.sendingToService
+			link.transport.SendingToClient = !link.transport.SendingToClient
+			link.transport.SendingToService = !link.transport.SendingToService
 		} else {
 			w.WriteHeader(404)
 			return
@@ -51,8 +51,8 @@ func commandHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		link := linkMgr.get(id)
 		if link != nil {
-			link.receivingFromClient = !link.receivingFromClient
-			link.receivingFromService = !link.receivingFromService
+			link.transport.ReceivingFromClient = !link.transport.ReceivingFromClient
+			link.transport.ReceivingFromService = !link.transport.ReceivingFromService
 		} else {
 			w.WriteHeader(404)
 			return

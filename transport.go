@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"io"
 	"log"
+	"time"
 )
 
 const ReadsFromService = true
@@ -18,10 +19,10 @@ func transport(link *link, w io.Writer, r io.Reader, readsFromService bool) erro
 			err  error
 			read int
 		)
-		doRead := (readsFromService && link.receivingFromService) ||
-			!readsFromService && link.receivingFromClient
-		doWrite := (readsFromService && link.sendingToClient) ||
-			!readsFromService && link.sendingToService
+		doRead := (readsFromService && link.transport.ReceivingFromService) ||
+			!readsFromService && link.transport.ReceivingFromClient
+		doWrite := (readsFromService && link.transport.SendingToClient) ||
+			!readsFromService && link.transport.SendingToService
 
 		if doRead {
 			read, err = r.Read(buffer)
@@ -29,6 +30,15 @@ func transport(link *link, w io.Writer, r io.Reader, readsFromService bool) erro
 				return err
 			}
 		}
+
+		if readsFromService && link.transport.DelayServiceResponse > 0 {
+			if *verbose {
+				log.Printf("[%s] delay %d ms of sending response with %d bytes",
+					link.route.Label, link.transport.DelayServiceResponse, read)
+			}
+			time.Sleep(time.Duration(link.transport.DelayServiceResponse) * time.Millisecond)
+		}
+
 		if doWrite {
 			offset := 0
 			towrite := read
