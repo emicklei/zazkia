@@ -13,6 +13,14 @@ type Route struct {
 	ListenPort   int    `json:"listen-port"`
 }
 
+type LinkState struct {
+	DelayTargetResponse  int  `json:"delay-target-response"`
+	SendingToClient      bool `json:"sending-to-client"`
+	ReceivingFromClient  bool `json:"receiving-from-client"`
+	SendingToService     bool `json:"sending-to-service"`
+	ReceivingFromService bool `json:"receiving-from-service"`
+}
+
 func readRoutes() (routes []Route, err error) {
 	f, err := os.Open("routes.json")
 	if err != nil {

@@ -1,10 +1,8 @@
 package main
 
 import (
-	"bytes"
 	"flag"
 	"fmt"
-	"io"
 	"log"
 	"net"
 	"net/http"
@@ -12,14 +10,13 @@ import (
 	"os/signal"
 )
 
-var verbose = flag.Bool("v", false, "verbose logging")
+var (
+	verbose   = flag.Bool("v", false, "verbose logging")
+	adminPort = flag.Int("p", 9191, "port on which the admin http server will listen")
 
-var port = flag.Int("port", 49999, "port on which this service will listen")
-var adminPort = flag.Int("admin.port", 48888, "port on which the admin http server will listen")
-
-var routeMgr routeManager
-
-var linkMgr = newLinkManager()
+	routeMgr routeManager
+	linkMgr  = newLinkManager()
+)
 
 func main() {
 	flag.Parse()
@@ -50,8 +47,7 @@ func main() {
 
 	log.Printf("start http listening on :%d\n", *adminPort)
 	http.HandleFunc("/", commandHandler)
-	err = http.ListenAndServe(fmt.Sprintf(":%d", *adminPort), nil)
-	log.Println(err)
+	log.Println(http.ListenAndServe(fmt.Sprintf(":%d", *adminPort), nil))
 	cleanAndExit(1)
 }
 
@@ -101,67 +97,4 @@ func handleConnection(route Route, clientConn net.Conn) {
 		log.Printf("stopped reading from remote (%v), writing to client (%v)\n", addr, clientConn.RemoteAddr())
 		linkMgr.disconnectAndRemove(link.ID)
 	}()
-}
-
-const ReadsFromService = true
-
-var TransportBufferSize = 32 * 1024
-
-func transport(link *link, w io.Writer, r io.Reader, readsFromService bool) error {
-	// io.Copy with simulated problems
-	buffer := make([]byte, TransportBufferSize)
-	for {
-		var (
-			err  error
-			read int
-		)
-		doRead := (readsFromService && link.receivingFromService) ||
-			!readsFromService && link.receivingFromClient
-		doWrite := (readsFromService && link.sendingToClient) ||
-			!readsFromService && link.sendingToService
-
-		if doRead {
-			read, err = r.Read(buffer)
-			if err != nil {
-				return err
-			}
-		}
-		if doWrite {
-			offset := 0
-			towrite := read
-			for towrite > 0 {
-				subset := buffer[offset:read]
-				written, err := w.Write(subset)
-				if err != nil {
-					return err
-				}
-				if *verbose {
-					log.Printf("[%s] written %d from %d", link.route.Label, written, read)
-					log.Println(printable(subset))
-				}
-				offset += written
-				towrite -= written
-			}
-		} else {
-			if *verbose {
-				log.Printf("[%s] flushing %d bytes", link.route.Label, read)
-			}
-		}
-	}
-}
-
-func printable(data []byte) string {
-	b := new(bytes.Buffer)
-	for _, each := range data {
-		if each == 10 || each == 13 { // CR,LF
-			b.WriteByte(each)
-			continue
-		}
-		if each >= 32 && each <= 126 {
-			b.WriteByte(each)
-		} else {
-			b.WriteByte(46) // dot
-		}
-	}
-	return b.String()
 }
