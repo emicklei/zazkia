@@ -65,16 +65,16 @@ func transport(link *link, w io.Writer, r io.Reader, readsFromService bool) erro
 
 func printable(data []byte) string {
 	b := new(bytes.Buffer)
-	for _, each := range data {
-		if each == 10 || each == 13 { // CR,LF
-			b.WriteByte(each)
+	for _, each := range string(data) {
+		if each == '\u000A' { // LF
+			b.WriteRune(each)
 			continue
 		}
-		if each >= 32 && each <= 126 {
-			b.WriteByte(each)
-		} else {
-			b.WriteByte(46) // dot
+		if each >= ' ' && each <= '~' {
+			b.WriteRune(each)
+			continue
 		}
+		b.WriteByte(46) // dot
 	}
 	return b.String()
 }

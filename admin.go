@@ -10,10 +10,34 @@ import (
 
 func commandHandler(w http.ResponseWriter, r *http.Request) {
 	cmd := r.URL.String()
+
+	// poor mans routing
+
 	switch {
 	case cmd == "/links":
 		w.Header().Set("Content-Type", "text/html")
 		adminPage.Execute(w, linkMgr.sortedLinks())
+
+	case strings.HasPrefix(cmd, "/delay-response/"):
+		token := cmd[len("/delay-response/"):]
+		id, err := strconv.Atoi(token)
+		if err != nil {
+			http.Redirect(w, r, "/links", 307)
+			return
+		}
+		link := linkMgr.get(id)
+		if link != nil {
+			// toggle
+			if link.transport.DelayServiceResponse > 0 {
+				link.transport.DelayServiceResponse = 0
+			} else {
+				link.transport.DelayServiceResponse = 10000 // 10 sec
+			}
+		} else {
+			w.WriteHeader(404)
+			return
+		}
+		http.Redirect(w, r, "/links", 307)
 
 	case strings.HasPrefix(cmd, "/close/"):
 		token := cmd[len("/close/"):]
@@ -77,6 +101,7 @@ var adminPage = template.Must(template.New("admin").Parse(`<html>
 			<li><a href="/close/{{ .ID }}">close</a></li>
 			<li><a href="/toggle-send/{{ .ID }}">toggle-send</a></li>
 			<li><a href="/toggle-receive/{{ .ID }}">toggle-receive</a></li>
+			<li><a href="/delay-response/{{ .ID }}">delay-response</a></li>
 		</ul>
 	</li>
 {{ end }}
