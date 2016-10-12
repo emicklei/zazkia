@@ -11,13 +11,16 @@ const ReadsFromService = true
 
 var TransportBufferSize = 32 * 1024
 
+var tickerFunc = time.NewTicker
+
 func transport(link *link, w io.Writer, r io.Reader, readsFromService bool) error {
 	// io.Copy with simulated problems
 	buffer := make([]byte, TransportBufferSize)
 	for {
 		var (
-			err  error
-			read int
+			err       error
+			read      int
+			throttler *time.Ticker
 		)
 		doRead := (readsFromService && link.transport.ReceivingFromService) ||
 			!readsFromService && link.transport.ReceivingFromClient
@@ -39,14 +42,33 @@ func transport(link *link, w io.Writer, r io.Reader, readsFromService bool) erro
 			time.Sleep(time.Duration(link.transport.DelayServiceResponse) * time.Millisecond)
 		}
 
+		doThrottle := link.transport.ThrottleServiceResponse > 0
+		if doThrottle {
+			throttler = time.NewTicker(time.Duration(1000/link.transport.ThrottleServiceResponse) * time.Millisecond) // ms
+			defer throttler.Stop()
+		}
+
 		if doWrite {
 			offset := 0
 			towrite := read
 			for towrite > 0 {
+				var (
+					err     error
+					written int
+				)
 				subset := buffer[offset:read]
-				written, err := w.Write(subset)
-				if err != nil {
-					return err
+				if doThrottle {
+					<-throttler.C
+					written, err = w.Write(subset[:1])
+					if err != nil {
+						return err
+					}
+				} else {
+					// unthrottled
+					written, err = w.Write(subset)
+					if err != nil {
+						return err
+					}
 				}
 				if *verbose {
 					log.Printf("[%s] written %d from %d", link.route.Label, written, read)

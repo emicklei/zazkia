@@ -32,18 +32,25 @@ func newLink(r Route, connectionToClient net.Conn, connectionToService net.Conn)
 		route:       r,
 		clientConn:  connectionToClient,
 		serviceConn: connectionToService,
-		transport: TransportState{
-			SendingToClient:      true,
-			ReceivingFromClient:  true,
-			SendingToService:     true,
-			ReceivingFromService: true,
-			DelayServiceResponse: 0,
-		},
 	}
+	l.resetTransport()
 	if r.hasTransportState() {
 		l.transport = *r.Transport
 	}
 	return l
+}
+
+func (l *link) resetTransport() {
+	l.transport = TransportState{
+		Verbose:                       false,
+		SendingToClient:               true,
+		ReceivingFromClient:           true,
+		SendingToService:              true,
+		ReceivingFromService:          true,
+		DelayServiceResponse:          0,
+		ThrottleServiceResponse:       0,
+		ServiceResponseCorruptMethods: []string{},
+	}
 }
 
 func (l link) String() string {
@@ -53,11 +60,12 @@ func (l link) String() string {
 		l.serviceConn.RemoteAddr().String(), l.transport.SendingToClient, l.transport.ReceivingFromClient)
 }
 
-func (l *link) disconnect() {
+func (l *link) disconnect() error {
 	if l.clientConn != nil {
-		l.clientConn.Close()
+		return l.clientConn.Close()
 	}
 	if l.serviceConn != nil {
-		l.serviceConn.Close()
+		return l.serviceConn.Close()
 	}
+	return nil
 }

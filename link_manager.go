@@ -1,6 +1,9 @@
 package main
 
-import "sync"
+import (
+	"errors"
+	"sync"
+)
 
 type linkManager struct {
 	links map[int]*link
@@ -43,15 +46,16 @@ func (m *linkManager) get(id int) *link {
 	return l
 }
 
-func (m *linkManager) disconnectAndRemove(id int) {
+func (m *linkManager) disconnectAndRemove(id int) error {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
 	link, ok := m.links[id]
 	if !ok {
-		return
+		return errors.New("no link with id")
 	}
 	link.disconnect()
 	delete(m.links, link.ID)
+	return nil
 }
 
 func (m *linkManager) close() {

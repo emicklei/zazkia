@@ -15,11 +15,14 @@ type Route struct {
 }
 
 type TransportState struct {
-	DelayServiceResponse int  `json:"delay-service-response"`
-	SendingToClient      bool `json:"sending-to-client"`
-	ReceivingFromClient  bool `json:"receiving-from-client"`
-	SendingToService     bool `json:"sending-to-service"`
-	ReceivingFromService bool `json:"receiving-from-service"`
+	Verbose                       bool     `json:"verbose"`
+	ThrottleServiceResponse       int      `json:"throttle-service-response"` // bytes per second
+	DelayServiceResponse          int      `json:"delay-service-response"`    // milliseconds
+	SendingToClient               bool     `json:"sending-to-client"`
+	ReceivingFromClient           bool     `json:"receiving-from-client"`
+	SendingToService              bool     `json:"sending-to-service"`
+	ReceivingFromService          bool     `json:"receiving-from-service"`
+	ServiceResponseCorruptMethods []string `json:"service-response-corrupt-methods"`
 }
 
 func readRoutes() (routes []Route, err error) {
