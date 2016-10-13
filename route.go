@@ -16,14 +16,14 @@ type Route struct {
 }
 
 type TransportState struct {
-	Verbose                       bool     `json:"verbose"`
-	ThrottleServiceResponse       int      `json:"throttle-service-response"` // bytes per second
-	DelayServiceResponse          int      `json:"delay-service-response"`    // milliseconds
-	SendingToClient               bool     `json:"sending-to-client"`
-	ReceivingFromClient           bool     `json:"receiving-from-client"`
-	SendingToService              bool     `json:"sending-to-service"`
-	ReceivingFromService          bool     `json:"receiving-from-service"`
-	ServiceResponseCorruptMethods []string `json:"service-response-corrupt-methods"`
+	Verbose                      bool   `json:"verbose"`
+	ThrottleServiceResponse      int    `json:"throttle-service-response"` // bytes per second
+	DelayServiceResponse         int    `json:"delay-service-response"`    // milliseconds
+	SendingToClient              bool   `json:"sending-to-client"`
+	ReceivingFromClient          bool   `json:"receiving-from-client"`
+	SendingToService             bool   `json:"sending-to-service"`
+	ReceivingFromService         bool   `json:"receiving-from-service"`
+	ServiceResponseCorruptMethod string `json:"service-response-corrupt-method"`
 }
 
 func readRoutes(location string) (routes []Route, err error) {
@@ -50,6 +50,7 @@ func (r Route) String() string {
 }
 
 func (s TransportState) String() string {
-	return fmt.Sprintf("delay=%d,s2c=%v,rfc=%v,s2s=%v,rfs=%v",
-		s.DelayServiceResponse, s.SendingToClient, s.ReceivingFromClient, s.SendingToService, s.ReceivingFromService)
+	return fmt.Sprintf("delay=%d,s2c=%v,rfc=%v,s2s=%v,rfs=%v,thr=%d,cor=%s,v=%v",
+		s.DelayServiceResponse, s.SendingToClient, s.ReceivingFromClient, s.SendingToService, s.ReceivingFromService,
+		s.ThrottleServiceResponse, s.ServiceResponseCorruptMethod, s.Verbose)
 }

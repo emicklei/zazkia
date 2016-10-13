@@ -42,22 +42,23 @@ func newLink(r Route, connectionToClient net.Conn, connectionToService net.Conn)
 
 func (l *link) resetTransport() {
 	l.transport = TransportState{
-		Verbose:                       false,
-		SendingToClient:               true,
-		ReceivingFromClient:           true,
-		SendingToService:              true,
-		ReceivingFromService:          true,
-		DelayServiceResponse:          0,
-		ThrottleServiceResponse:       0,
-		ServiceResponseCorruptMethods: []string{},
+		Verbose:                      false,
+		SendingToClient:              true,
+		ReceivingFromClient:          true,
+		SendingToService:             true,
+		ReceivingFromService:         true,
+		DelayServiceResponse:         0,
+		ThrottleServiceResponse:      0,
+		ServiceResponseCorruptMethod: "",
 	}
 }
 
 func (l link) String() string {
-	return fmt.Sprintf("[%s] %d: %s (s=%v,r=%v) <-> %s (s=%v,r=%v)",
+	return fmt.Sprintf("[%s] %d: %s (s=%v,r=%v) <-> %s (s=%v,r=%v,d=%d,v=%v)",
 		l.route.Label, l.ID,
 		l.clientConn.RemoteAddr().String(), l.transport.SendingToService, l.transport.ReceivingFromService,
-		l.serviceConn.RemoteAddr().String(), l.transport.SendingToClient, l.transport.ReceivingFromClient)
+		l.serviceConn.RemoteAddr().String(), l.transport.SendingToClient, l.transport.ReceivingFromClient,
+		l.transport.DelayServiceResponse, l.transport.Verbose)
 }
 
 func (l *link) disconnect() error {

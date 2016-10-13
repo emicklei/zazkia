@@ -52,6 +52,15 @@ func (r linkResource) toggleSend(i *restful.Request, o *restful.Response) {
 	gotoLinks(i, o)
 }
 
+func (r linkResource) toggleVerbose(i *restful.Request, o *restful.Response) {
+	link := getLink(i, o)
+	if link == nil {
+		return
+	}
+	link.transport.Verbose = !link.transport.Verbose
+	gotoLinks(i, o)
+}
+
 func (r linkResource) toggleReceive(i *restful.Request, o *restful.Response) {
 	link := getLink(i, o)
 	if link == nil {
@@ -63,7 +72,7 @@ func (r linkResource) toggleReceive(i *restful.Request, o *restful.Response) {
 }
 
 func gotoLinks(i *restful.Request, o *restful.Response) {
-	http.Redirect(o.ResponseWriter, i.Request, "/links", http.StatusSeeOther)
+	http.Redirect(o.ResponseWriter, i.Request, "/v1/links", http.StatusSeeOther)
 }
 
 func getLink(i *restful.Request, o *restful.Response) *link {
