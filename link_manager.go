@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"log"
 	"sync"
 )
 
@@ -53,6 +54,7 @@ func (m *linkManager) disconnectAndRemove(id int) error {
 	if !ok {
 		return errors.New("no link with id")
 	}
+	log.Println("disconnecting", link.ID)
 	link.disconnect()
 	delete(m.links, link.ID)
 	return nil

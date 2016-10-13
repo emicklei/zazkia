@@ -13,8 +13,9 @@ import (
 )
 
 var (
-	verbose   = flag.Bool("v", false, "verbose logging")
-	adminPort = flag.Int("p", 9191, "port on which the admin http server will listen")
+	verbose    = flag.Bool("v", false, "verbose logging")
+	adminPort  = flag.Int("p", 9191, "port on which the admin http server will listen")
+	configfile = flag.String("f", "routes.json", "route definition")
 
 	routeMgr routeManager
 	linkMgr  = newLinkManager()
@@ -31,7 +32,7 @@ func main() {
 		cleanAndExit(0)
 	}()
 
-	routes, err := readRoutes()
+	routes, err := readRoutes(*configfile)
 	if err != nil {
 		log.Fatalf("failed to read routes:%v", err)
 	}

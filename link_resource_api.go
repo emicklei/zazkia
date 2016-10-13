@@ -19,4 +19,5 @@ func registerLinkResource(l linkResource, container *restful.Container) {
 	ws.Route(ws.GET("/{id}/toggle-send").To(l.toggleSend))
 	ws.Route(ws.GET("/{id}/toggle-receive").To(l.toggleReceive))
 	ws.Route(ws.GET("/favion.ico").To(noOperation))
+	container.Add(ws)
 }

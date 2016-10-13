@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"os"
 )
 
@@ -25,8 +26,9 @@ type TransportState struct {
 	ServiceResponseCorruptMethods []string `json:"service-response-corrupt-methods"`
 }
 
-func readRoutes() (routes []Route, err error) {
-	f, err := os.Open("routes.json")
+func readRoutes(location string) (routes []Route, err error) {
+	log.Println("reading routes from", location)
+	f, err := os.Open(location)
 	if err != nil {
 		return
 	}
