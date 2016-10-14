@@ -1,18 +1,15 @@
-
-
-> zazkia
+/*
 Zazkia can simulate all kinds of connection problems with a tcp connection (reset,delay,throttle,corrupt).
 In order to apply errornous behavior, zazkia must be used as a proxy between a client and service.
 It will accept tcp connections from a client and for each new one, will create a connection to the target service.
 
-### Routes
+Routes
+
 By specifying routes, you can tell zazkia on what ports to listen and what target to connect (domain and port).
 The transport part of the route configuration can be used to setup the initial behavior of new connection pairs (called links).
 Using a REST api, the transport behavior can be changed on a per-connection basis.
 
 routes.json example
-
-
 	[
 	    {
 	        "label": "oracle",
@@ -31,15 +28,19 @@ routes.json example
 	    }
 	]
 
-### Build
-To build, test and run it.
 
+Build
+
+To build, test and run it.
 
 	sh run.sh
 
-### Dashboard
+Dashboard
+
 A simple HTML dashboard is available to change the transport behavior of individual links.
 
 
-	<a href="http://localhost:9191/v1/links">http://localhost:9191/v1/links</a>
+	http://localhost:9191/v1/links
 
+*/
+package main

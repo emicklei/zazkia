@@ -40,6 +40,8 @@ func (l logger) Write(link *link, w io.Writer, p parcel) (parcel, error) {
 	return p, nil
 }
 
+// printable returns a string from bytes with characters that can be displayed on a console.
+// linefeeds are preserved
 func printable(data []byte) string {
 	b := new(bytes.Buffer)
 	for _, each := range string(data) {

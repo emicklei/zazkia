@@ -4,7 +4,7 @@ import "io"
 
 type sender struct{}
 
-func (f sender) Write(link *link, w io.Writer, p parcel) (parcel, error) {
+func (s sender) Write(link *link, w io.Writer, p parcel) (parcel, error) {
 	if p.isEmpty() {
 		return p, nil
 	}
