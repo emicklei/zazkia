@@ -1,7 +1,7 @@
 
 
 > zazkia
-Zazkia can simulate all kinds of connection problems with a tcp connection (reset,delay,throttle,corrupt).
+is a tool that simulates all kinds of connection problems with a tcp connection (reset,delay,throttle,corrupt).
 In order to apply errornous behavior, zazkia must be used as a proxy between a client and service.
 It will accept tcp connections from a client and for each new one, will create a connection to the target service.
 
@@ -41,5 +41,5 @@ To build, test and run it.
 A simple HTML dashboard is available to change the transport behavior of individual links.
 
 
-	<a href="http://localhost:9191/v1/links">http://localhost:9191/v1/links</a>
+	localhost:9191/v1/links
 
