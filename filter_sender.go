@@ -2,6 +2,7 @@ package main
 
 import "io"
 
+// sender will write all the data of a parcel to a writer.
 type sender struct{}
 
 func (s sender) Write(link *link, w io.Writer, p parcel) (parcel, error) {

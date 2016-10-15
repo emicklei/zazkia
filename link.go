@@ -5,6 +5,7 @@ import (
 	"net"
 )
 
+// channel for consecutive integers to assign to new connections
 var idGen chan int
 
 func init() {
@@ -34,6 +35,7 @@ func newLink(r Route, connectionToClient net.Conn, connectionToService net.Conn)
 		serviceConn: connectionToService,
 	}
 	l.resetTransport()
+	// take the config from the route if given
 	if r.hasTransportState() {
 		l.transport = *r.Transport
 	}

@@ -2,6 +2,7 @@ package main
 
 import "io"
 
+// clientAccess is a filter to control whether reading or writing a client is allowed for the link.
 type clientAccess struct{}
 
 func (c clientAccess) Read(link *link, r io.Reader, p parcel) (parcel, error) {

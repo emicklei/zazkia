@@ -36,6 +36,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to read routes:%v", err)
 	}
+
 	routeMgr = routeManager{routes: routes}
 
 	// for each route start a listener

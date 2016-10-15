@@ -8,8 +8,8 @@ import (
 )
 
 func Test_serviceAccess(t *testing.T) {
-	TransportBufferSize = 4
-	defer func() { TransportBufferSize = 1024 }()
+	transportBufferSize = 4
+	defer func() { transportBufferSize = 1024 }()
 	l := new(link)
 	l.resetTransport()
 	r := strings.NewReader("abcdefghij")
@@ -50,8 +50,8 @@ func Test_client_to_service(t *testing.T) {
 }
 
 func Test_flusher(t *testing.T) {
-	TransportBufferSize = 4
-	defer func() { TransportBufferSize = 1024 }()
+	transportBufferSize = 4
+	defer func() { transportBufferSize = 1024 }()
 	l := new(link)
 	l.resetTransport()
 	w := new(bytes.Buffer)

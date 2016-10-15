@@ -30,9 +30,9 @@ func Test_transport_no_send_service(t *testing.T) {
 }
 
 func Test_transport_small_buffer(t *testing.T) {
-	TransportBufferSize = 4
+	transportBufferSize = 4
 	defer func() {
-		TransportBufferSize = 32 * 1024
+		transportBufferSize = 32 * 1024
 	}()
 	l := new(link)
 	l.resetTransport()

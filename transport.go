@@ -4,9 +4,7 @@ import "io"
 
 const ReadsFromService = true
 
-var TransportBufferSize = 32 * 1024
-
-func transport(link *link, w io.Writer, r io.Reader, readsFromService bool) error {
+func  transport(link *link, w io.Writer, r io.Reader, readsFromService bool) error {
 	readers := []linkReader{}
 	writers := []linkWriter{}
 	if readsFromService {

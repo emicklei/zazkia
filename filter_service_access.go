@@ -2,6 +2,7 @@ package main
 
 import "io"
 
+// serviceAccess is a filter to control whether reading or writing a service is allowed for the link.
 type serviceAccess struct{}
 
 func (s serviceAccess) Read(link *link, r io.Reader, p parcel) (parcel, error) {
