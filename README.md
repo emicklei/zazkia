@@ -27,16 +27,19 @@ routes.json example
 				"receiving-from-client": true,
 				"sending-to-service": true,
 				"receiving-from-service": true,
-				"verbose": false,
+				"verbose": false
 	        }
 	    }
 	]
 
-### Build
+### Install
 [![Build Status](https://drone.io/github.com/emicklei/zazkia/status.png)](https://drone.io/github.com/emicklei/zazkia/latest)
 
-To build the project locally, test and run it.
+Dependencies
 
+	go get -u github.com/emicklei/go-restful
+
+To build the project locally, test and run it.
 
 	sh run.sh
 
