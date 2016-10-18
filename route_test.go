@@ -15,7 +15,7 @@ var routesData = `
 	        "target-port": 1521,
 	        "listen-port": 49997,
 	        "transport": {
-				"throttle-service-response": 0
+				"throttle-service-response": 0,
 				"delay-target-response": 0,
 				"sending-to-client": true,
 				"receiving-from-client": true,
@@ -32,9 +32,14 @@ func TestReadRoutes(t *testing.T) {
 	loc := path.Join(dir, "routes.json")
 	err := ioutil.WriteFile(loc, []byte(routesData), 0666)
 	if err != nil {
-		t.Error(err)
+		t.Fatal(err)
 	}
 	defer os.RemoveAll(dir) // clean up
 	rs, err := readRoutes(loc)
-	t.Log(rs, err)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got, want := len(rs), 1; got != want {
+		t.Errorf("got %v want %v", got, want)
+	}
 }

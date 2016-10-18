@@ -1,35 +1,30 @@
 package main
 
-import (
-	"net/http"
-	"strconv"
-
-	"github.com/emicklei/go-restful"
-)
+import "net/http"
 
 type linkResource struct {
 	manager *linkManager
 }
 
-func (r linkResource) showLinks(i *restful.Request, o *restful.Response) {
-	o.ResponseWriter.Header().Set("Content-Type", "text/html")
-	adminPage.Execute(o.ResponseWriter, r.manager.sortedLinks())
+func (l linkResource) showLinks(id int, w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/html")
+	adminPage.Execute(w, l.manager.sortedLinks())
 }
 
-func (r linkResource) close(i *restful.Request, o *restful.Response) {
-	link := getLink(i, o)
+func (l linkResource) close(id int, w http.ResponseWriter, r *http.Request) {
+	link := getLink(id, w, r)
 	if link == nil {
 		return
 	}
-	if err := r.manager.disconnectAndRemove(link.ID); err != nil {
-		o.WriteErrorString(http.StatusNotFound, err.Error())
+	if err := l.manager.disconnectAndRemove(link.ID); err != nil {
+		http.NotFound(w, r)
 		return
 	}
-	gotoLinks(i, o)
+	gotoLinks(w, r)
 }
 
-func (r linkResource) delayResponse(i *restful.Request, o *restful.Response) {
-	link := getLink(i, o)
+func (l linkResource) delayResponse(id int, w http.ResponseWriter, r *http.Request) {
+	link := getLink(id, w, r)
 	if link == nil {
 		return
 	}
@@ -39,51 +34,42 @@ func (r linkResource) delayResponse(i *restful.Request, o *restful.Response) {
 	} else {
 		link.transport.DelayServiceResponse = 10000 // 10 sec
 	}
-	gotoLinks(i, o)
+	gotoLinks(w, r)
 }
 
-func (r linkResource) toggleSend(i *restful.Request, o *restful.Response) {
-	link := getLink(i, o)
+func (l linkResource) toggleSend(id int, w http.ResponseWriter, r *http.Request) {
+	link := getLink(id, w, r)
 	if link == nil {
 		return
 	}
 	link.transport.SendingToClient = !link.transport.SendingToClient
 	link.transport.SendingToService = !link.transport.SendingToService
-	gotoLinks(i, o)
+	gotoLinks(w, r)
 }
 
-func (r linkResource) toggleVerbose(i *restful.Request, o *restful.Response) {
-	link := getLink(i, o)
+func (l linkResource) toggleVerbose(id int, w http.ResponseWriter, r *http.Request) {
+	link := getLink(id, w, r)
 	if link == nil {
 		return
 	}
 	link.transport.Verbose = !link.transport.Verbose
-	gotoLinks(i, o)
+	gotoLinks(w, r)
 }
 
-func (r linkResource) toggleReceive(i *restful.Request, o *restful.Response) {
-	link := getLink(i, o)
+func (l linkResource) toggleReceive(id int, w http.ResponseWriter, r *http.Request) {
+	link := getLink(id, w, r)
 	if link == nil {
 		return
 	}
 	link.transport.ReceivingFromClient = !link.transport.ReceivingFromClient
 	link.transport.ReceivingFromService = !link.transport.ReceivingFromService
-	gotoLinks(i, o)
+	gotoLinks(w, r)
 }
 
-func gotoLinks(i *restful.Request, o *restful.Response) {
-	http.Redirect(o.ResponseWriter, i.Request, "/v1/links", http.StatusSeeOther)
-}
-
-func getLink(i *restful.Request, o *restful.Response) *link {
-	id, err := strconv.Atoi(i.PathParameter("id"))
-	if err != nil {
-		o.WriteErrorString(http.StatusBadRequest, err.Error())
-		return nil
-	}
+func getLink(id int, w http.ResponseWriter, r *http.Request) *link {
 	link := linkMgr.get(id)
 	if link == nil {
-		o.WriteErrorString(http.StatusNotFound, "no such link")
+		http.NotFound(w, r)
 		return nil
 	}
 	return link

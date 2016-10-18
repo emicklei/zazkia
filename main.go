@@ -8,8 +8,6 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-
-	"github.com/emicklei/go-restful"
 )
 
 var (
@@ -51,7 +49,7 @@ func main() {
 
 	log.Printf("start http listening on :%d\n", *adminPort)
 
-	registerLinkResource(linkResource{linkMgr}, restful.DefaultContainer)
+	http.Handle("/", linkResource{linkMgr})
 
 	log.Println(http.ListenAndServe(fmt.Sprintf(":%d", *adminPort), nil))
 	cleanAndExit(1)

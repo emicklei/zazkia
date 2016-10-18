@@ -1,24 +1,40 @@
 package main
 
-import "github.com/emicklei/go-restful"
+import (
+	"net/http"
+	"regexp"
+	"strconv"
+)
 
-var noOperation = func(*restful.Request, *restful.Response) {}
+var linksMatcher = regexp.MustCompile("/links/(\\d*)/(.+)")
 
-func registerLinkResource(l linkResource, container *restful.Container) {
-	ws := new(restful.WebService)
-	ws.
-		ApiVersion("1.0").
-		Path("/v1/links").
-		Doc("Link management").
-		Consumes("*/*").
-		Produces(restful.MIME_JSON)
+func (l linkResource) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	tokens := linksMatcher.FindStringSubmatch(r.URL.Path)
+	if len(tokens) != 3 {
+		http.NotFound(w, r)
+		return
+	}
+	id, err := strconv.Atoi(tokens[1])
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	switch tokens[2] {
+	case "close":
+		l.close(id, w, r)
+	case "delay-response":
+		l.delayResponse(id, w, r)
+	case "toggle-receive":
+		l.toggleReceive(id, w, r)
+	case "toggle-send":
+		l.toggleSend(id, w, r)
+	case "toggle-verbose":
+		l.toggleVerbose(id, w, r)
+	default:
+		gotoLinks(w, r)
+	}
+}
 
-	ws.Route(ws.GET("/").To(l.showLinks))
-	ws.Route(ws.GET("/{id}/close").To(l.close))
-	ws.Route(ws.GET("/{id}/delay-response").To(l.delayResponse))
-	ws.Route(ws.GET("/{id}/toggle-send").To(l.toggleSend))
-	ws.Route(ws.GET("/{id}/toggle-receive").To(l.toggleReceive))
-	ws.Route(ws.GET("/{id}/toggle-verbose").To(l.toggleVerbose))
-	ws.Route(ws.GET("/favion.ico").To(noOperation))
-	container.Add(ws)
+func gotoLinks(w http.ResponseWriter, r *http.Request) {
+	http.Redirect(w, r, "/links", http.StatusSeeOther)
 }

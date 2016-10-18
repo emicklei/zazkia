@@ -35,10 +35,6 @@ routes.json example
 ### Install
 [![Build Status](https://drone.io/github.com/emicklei/zazkia/status.png)](https://drone.io/github.com/emicklei/zazkia/latest)
 
-Dependencies
-
-	go get -u github.com/emicklei/go-restful
-
 To build the project locally, test and run it.
 
 	sh run.sh
