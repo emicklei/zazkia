@@ -33,7 +33,7 @@ routes.json example
 	]
 
 ### Install
-[![Build Status](https://drone.io/github.com/emicklei/zazkia/status.png)](https://drone.io/github.com/emicklei/zazkia/latest)
+[![Build Status](https://drone.io/github.com/emicklei/zazkia/status.png?maxAge=600)](https://drone.io/github.com/emicklei/zazkia/latest)
 
 To build the project locally, test and run it.
 
