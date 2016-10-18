@@ -43,4 +43,4 @@ To build the project locally, test and run it.
 A simple HTML dashboard is available to change the transport behavior of individual links.
 
 
-	http://localhost:9191/v1/links
+	http://localhost:9191/links
