@@ -7,9 +7,9 @@ In order to apply errornous behavior, zazkia must be used as a proxy between a c
 It will accept tcp connections from a client and for each new one, will create a connection to the target service.
 
 ### Routes
-By specifying routes, you can tell zazkia on what ports to listen and what target to connect (domain and port).
-The transport part of the route configuration can be used to setup the initial behavior of new connection pairs (called links).
-Using a REST api, the transport behavior can be changed on a per-connection basis.
+By specifying routes, you can tell zazkia on what ports to listen and what target to connect to (host and port).
+The transport part of the route configuration can be used to setup the initial behavior of a new connection pair (called link).
+Using a REST api, the transport behavior can be changed on a per-link basis.
 
 routes.json example
 
@@ -23,6 +23,7 @@ routes.json example
 	        "transport": {
 				"throttle-service-response": 0
 				"delay-target-response": 0,
+				"service-response-corrupt-method": ""
 				"sending-to-client": true,
 				"receiving-from-client": true,
 				"sending-to-service": true,
@@ -31,6 +32,12 @@ routes.json example
 	        }
 	    }
 	]
+
+| transport property | comment | effective values |
+|-----------|---------|--------|
+| throttle-service-response | bytes per seconds | positive integer |
+| delay-target-response | milliseconds delay | positive integer |
+| service-response-corrupt-method | how the bytes are mangled | firstbyte, randomize |
 
 ### Install
 [![Build Status](https://drone.io/github.com/emicklei/zazkia/status.png?maxAge=600)](https://drone.io/github.com/emicklei/zazkia/latest)
