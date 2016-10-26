@@ -23,7 +23,7 @@ routes.json example
 	        "transport": {
 				"throttle-service-response": 0
 				"delay-target-response": 0,
-				"service-response-corrupt-method": ""
+				"service-response-corrupt-method": "",
 				"sending-to-client": true,
 				"receiving-from-client": true,
 				"sending-to-service": true,
@@ -38,6 +38,10 @@ routes.json example
 | throttle-service-response | bytes per seconds | positive integer |
 | delay-target-response | milliseconds delay | positive integer |
 | service-response-corrupt-method | how the bytes are mangled | firstbyte, randomize |
+| sending-to-client | whether a response from the service is sent back to the client | true, false |
+| receiving-from-client | whether a request from the client is read | true, false |
+| sending-to-service | whether a request from the client is sent to the service | true, false |
+| receiving-from-service | whether a response from the service is read | true, false |
 
 ### Install
 [![Build Status](https://drone.io/github.com/emicklei/zazkia/status.png?maxAge=600)](https://drone.io/github.com/emicklei/zazkia/latest)
