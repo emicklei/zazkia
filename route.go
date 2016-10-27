@@ -8,11 +8,11 @@ import (
 )
 
 type Route struct {
-	Label         string
-	ServiceDomain string          `json:"service-domain"`
-	ServicePort   int             `json:"service-port"`
-	ListenPort    int             `json:"listen-port"`
-	Transport     *TransportState `json:"transport"`
+	Label           string
+	ServiceHostname string          `json:"service-hostname"`
+	ServicePort     int             `json:"service-port"`
+	ListenPort      int             `json:"listen-port"`
+	Transport       *TransportState `json:"transport"`
 }
 
 type TransportState struct {
@@ -38,7 +38,7 @@ func readRoutes(location string) (routes []Route, err error) {
 }
 
 func (r Route) tcp() string {
-	return fmt.Sprintf("%s:%d", r.ServiceDomain, r.ServicePort)
+	return fmt.Sprintf("%s:%d", r.ServiceHostname, r.ServicePort)
 }
 
 func (r Route) hasTransportState() bool {
@@ -46,7 +46,7 @@ func (r Route) hasTransportState() bool {
 }
 
 func (r Route) String() string {
-	return fmt.Sprintf("[%s] :%d <-> %s:%d {%v}", r.Label, r.ListenPort, r.ServiceDomain, r.ServicePort, r.Transport)
+	return fmt.Sprintf("[%s] :%d <-> %s:%d {%v}", r.Label, r.ListenPort, r.ServiceHostname, r.ServicePort, r.Transport)
 }
 
 func (s TransportState) String() string {

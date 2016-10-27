@@ -17,12 +17,12 @@ routes.json example
 	[
 	    {
 	        "label": "oracle",
-	        "target-domain": "some-host-name",
-	        "target-port": 1521,
+	        "service-hostname": "some.host.name",
+	        "service-port": 1521,
 	        "listen-port": 49997,
 	        "transport": {
 				"throttle-service-response": 0
-				"delay-target-response": 0,
+				"delay-service-response": 0,
 				"service-response-corrupt-method": "",
 				"sending-to-client": true,
 				"receiving-from-client": true,
@@ -36,7 +36,7 @@ routes.json example
 | transport property | comment | effective values |
 |-----------|---------|--------|
 | throttle-service-response | bytes per seconds | positive integer |
-| delay-target-response | milliseconds delay | positive integer |
+| delay-service-response | milliseconds delay | positive integer |
 | service-response-corrupt-method | how the bytes are mangled | firstbyte, randomize |
 | sending-to-client | whether a response from the service is sent back to the client | true, false |
 | receiving-from-client | whether a request from the client is read | true, false |
