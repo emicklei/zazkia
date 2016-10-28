@@ -9,7 +9,7 @@ It will accept tcp connections from a client and for each new one, will create a
 ### Routes
 By specifying routes, you can tell zazkia on what ports to listen and what target to connect to (host and port).
 
-minimal routes.json example
+Minimal routes.json example
 
 	[
 	    {
@@ -20,10 +20,14 @@ minimal routes.json example
 	    }
 	]
 
-The transport part of the route configuration can be used to setup the initial behavior of a new connection pair (called link).
+With this route definition, your application should use "localhost:49997" instead of "some.host.name:1521" in the connection specification.
+Your application (the client) will setup a tcp connection with zazkia which will setup another tcp connection to oracle (the service).
+
+#### Initial transport behavior
+The transport part of a route configuration can be used to setup the initial behavior of a new connection pair (called link).
 Using a REST api, the transport behavior can be changed on a per-link basis.
 
-full routes.json example
+Full routes.json example
 
 	[
 	    {
@@ -32,14 +36,14 @@ full routes.json example
 	        "service-port": 5432,
 	        "listen-port": 49998,
 	        "transport": {
-				"throttle-service-response": 0
-				"delay-service-response": 0,
-				"service-response-corrupt-method": "",
+				"throttle-service-response": 1000
+				"delay-service-response": 100,
+				"service-response-corrupt-method": "randomize",
 				"sending-to-client": true,
 				"receiving-from-client": true,
 				"sending-to-service": true,
 				"receiving-from-service": true,
-				"verbose": false
+				"verbose": true
 	        }
 	    }
 	]
