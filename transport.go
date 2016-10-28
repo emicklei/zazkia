@@ -2,14 +2,15 @@ package main
 
 import "io"
 
+// ReadsFromService is a parameter name
 const ReadsFromService = true
 
-func  transport(link *link, w io.Writer, r io.Reader, readsFromService bool) error {
+func transport(link *link, w io.Writer, r io.Reader, readsFromService bool) error {
 	readers := []linkReader{}
 	writers := []linkWriter{}
 	if readsFromService {
 		readers = append(readers, serviceAccess{}, logger{true})
-		writers = append(writers, clientAccess{}, logger{false}, delayer{}, throttler{}, sender{})
+		writers = append(writers, clientAccess{}, logger{false}, corrupt{}, delayer{}, throttler{}, sender{})
 	} else {
 		// readsFromClient
 		readers = append(readers, clientAccess{}, logger{false})
@@ -32,5 +33,4 @@ func  transport(link *link, w io.Writer, r io.Reader, readsFromService bool) err
 			p = pp
 		}
 	}
-	return nil
 }

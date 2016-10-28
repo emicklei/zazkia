@@ -35,7 +35,7 @@ routes.json example
 
 | transport property | comment | effective values |
 |-----------|---------|--------|
-| throttle-service-response | bytes per seconds | positive integer |
+| throttle-service-response | bytes per second | positive integer |
 | delay-service-response | milliseconds delay | positive integer |
 | service-response-corrupt-method | how the bytes are mangled | firstbyte, randomize |
 | sending-to-client | whether a response from the service is sent back to the client | true, false |

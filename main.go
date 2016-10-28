@@ -11,9 +11,9 @@ import (
 )
 
 var (
-	verbose    = flag.Bool("v", false, "verbose logging")
-	adminPort  = flag.Int("p", 9191, "port on which the admin http server will listen")
-	configfile = flag.String("f", "routes.json", "route definition")
+	oVerbose    = flag.Bool("v", false, "verbose logging")
+	oAdminPort  = flag.Int("p", 9191, "port on which the admin http server will listen")
+	oConfigfile = flag.String("f", "routes.json", "route definition")
 
 	routeMgr routeManager
 	linkMgr  = newLinkManager()
@@ -30,7 +30,7 @@ func main() {
 		cleanAndExit(0)
 	}()
 
-	routes, err := readRoutes(*configfile)
+	routes, err := readRoutes(*oConfigfile)
 	if err != nil {
 		log.Fatalf("failed to read routes:%v", err)
 	}
@@ -47,11 +47,11 @@ func main() {
 
 	}
 
-	log.Printf("start http listening on :%d\n", *adminPort)
+	log.Printf("start http listening on :%d\n", *oAdminPort)
 
 	http.Handle("/", linkResource{linkMgr})
 
-	log.Println(http.ListenAndServe(fmt.Sprintf(":%d", *adminPort), nil))
+	log.Println(http.ListenAndServe(fmt.Sprintf(":%d", *oAdminPort), nil))
 	cleanAndExit(1)
 }
 
