@@ -8,18 +8,29 @@ It will accept tcp connections from a client and for each new one, will create a
 
 ### Routes
 By specifying routes, you can tell zazkia on what ports to listen and what target to connect to (host and port).
-The transport part of the route configuration can be used to setup the initial behavior of a new connection pair (called link).
-Using a REST api, the transport behavior can be changed on a per-link basis.
 
-routes.json example
-
+minimal routes.json example
 
 	[
 	    {
 	        "label": "oracle",
 	        "service-hostname": "some.host.name",
 	        "service-port": 1521,
-	        "listen-port": 49997,
+	        "listen-port": 49997
+	    }
+	]
+
+The transport part of the route configuration can be used to setup the initial behavior of a new connection pair (called link).
+Using a REST api, the transport behavior can be changed on a per-link basis.
+
+full routes.json example
+
+	[
+	    {
+	        "label": "postgresql",
+	        "service-hostname": "some.other.host.name",
+	        "service-port": 5432,
+	        "listen-port": 49998,
 	        "transport": {
 				"throttle-service-response": 0
 				"delay-service-response": 0,
@@ -43,15 +54,21 @@ routes.json example
 | sending-to-service | whether a request from the client is sent to the service | true, false |
 | receiving-from-service | whether a response from the service is read | true, false |
 
-### Install
+### Build
 [![Build Status](https://drone.io/github.com/emicklei/zazkia/status.png?maxAge=600)](https://drone.io/github.com/emicklei/zazkia/latest)
 
-To build the project locally, test and run it.
+To build the project locally and test it.
 
-	sh run.sh
+	go test -v
+	go build
+
+## Run
+
+Defaults (-p 9191 -f routes.json)
+
+	./zazkia
 
 ### Dashboard
 A simple HTML dashboard is available to change the transport behavior of individual links.
-
 
 	http://localhost:9191/links

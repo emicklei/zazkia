@@ -7,6 +7,7 @@ import (
 	"os"
 )
 
+// Route represents the specification of a listener and client for connections (link).
 type Route struct {
 	Label           string
 	ServiceHostname string          `json:"service-hostname"`
@@ -15,6 +16,7 @@ type Route struct {
 	Transport       *TransportState `json:"transport"`
 }
 
+// TransportState specifies how the transport of data is affected.
 type TransportState struct {
 	Verbose                      bool   `json:"verbose"`
 	ThrottleServiceResponse      int    `json:"throttle-service-response"` // bytes per second
