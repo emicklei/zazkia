@@ -5,10 +5,10 @@ import (
 	"math/rand"
 )
 
-// corrupt mangles the byte sequence for writing
-type corrupt struct{}
+// corrupter mangles the byte sequence for writing
+type corrupter struct{}
 
-func (c corrupt) Write(link *link, w io.Writer, p parcel) (parcel, error) {
+func (c corrupter) Write(link *link, w io.Writer, p parcel) (parcel, error) {
 	m := link.transport.ServiceResponseCorruptMethod
 	if len(m) == 0 {
 		return p, nil

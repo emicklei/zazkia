@@ -2,19 +2,33 @@ package main
 
 import "io"
 
-// ReadsFromService is a parameter name
-const ReadsFromService = true
+// AccessesService is a parameter name
+const AccessesService = true
 
 func transport(link *link, w io.Writer, r io.Reader, readsFromService bool) error {
 	readers := []linkReader{}
 	writers := []linkWriter{}
 	if readsFromService {
-		readers = append(readers, serviceAccess{}, logger{true})
-		writers = append(writers, clientAccess{}, logger{false}, corrupt{}, delayer{}, throttler{}, sender{})
+		readers = append(readers, serviceAccess{}, counter{AccessesService}, logger{AccessesService})
+		// writes to client
+		writers = append(writers,
+			clientAccess{},
+			logger{!AccessesService},
+			corrupter{},
+			delayer{},
+			throttler{},
+			sender{},
+			counter{!AccessesService})
 	} else {
-		// readsFromClient
-		readers = append(readers, clientAccess{}, logger{false})
-		writers = append(writers, serviceAccess{}, logger{true}, delayer{}, throttler{}, sender{})
+		// reads from client
+		readers = append(readers, clientAccess{}, counter{!AccessesService}, logger{!AccessesService})
+		// writes to service
+		// note: no corrupter,delayer or throttler here
+		writers = append(writers,
+			serviceAccess{},
+			logger{AccessesService},
+			sender{},
+			counter{AccessesService})
 	}
 	for {
 		var p parcel

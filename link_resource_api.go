@@ -9,6 +9,10 @@ import (
 var linksMatcher = regexp.MustCompile("/links/(\\d*)/(.+)")
 
 func (l linkResource) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path == "/links" {
+		adminPage.Execute(w, linkMgr.sortedLinks())
+		return
+	}
 	tokens := linksMatcher.FindStringSubmatch(r.URL.Path)
 	if len(tokens) != 3 {
 		http.NotFound(w, r)

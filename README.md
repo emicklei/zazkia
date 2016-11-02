@@ -3,13 +3,13 @@ is a tool that simulates all kinds of connection problems with a tcp connection 
 
 
 ### How does it work ?
-In order to apply errornous behavior, zazkia must be used as a proxy between a client and service.
+In order to apply misbehavior, zazkia must be used as a proxy between a client and service.
 It will accept tcp connections from a client and for each new one, will create a connection to the target service.
 
 ### Routes
 By specifying routes, you can tell zazkia on what ports to listen and what target to connect to (host and port).
 
-Minimal routes.json example
+Minimal zazkia-routes.json example
 
 	[
 	    {
@@ -27,7 +27,7 @@ Your application (the client) will setup a tcp connection with zazkia which will
 The transport part of a route configuration can be used to setup the initial behavior of a new connection pair (called link).
 Using a REST api, the transport behavior can be changed on a per-link basis.
 
-Full routes.json example
+Full zazkia-routes.json example
 
 	[
 	    {
@@ -68,7 +68,7 @@ To build the project locally and test it.
 
 ## Run
 
-Defaults (-p 9191 -f routes.json)
+Defaults (-p 9191 -f zazkia-routes.json)
 
 	./zazkia
 

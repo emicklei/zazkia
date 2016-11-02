@@ -25,6 +25,22 @@ type link struct {
 	clientConn  net.Conn
 	serviceConn net.Conn
 	transport   TransportState
+	stats       TransportStats
+}
+
+type TransportStats struct {
+	bytesSentToService       int64
+	bytesSentToClient        int64
+	bytesReceivedFromClient  int64
+	bytesReceivedFromService int64
+}
+
+func (t TransportStats) String() string {
+	return fmt.Sprintf("client sent:%d,service recv:%d,service sent:%d,client recv:%d",
+		t.bytesReceivedFromClient,
+		t.bytesSentToService,
+		t.bytesReceivedFromService,
+		t.bytesSentToClient)
 }
 
 func newLink(r Route, connectionToClient net.Conn, connectionToService net.Conn) *link {
@@ -33,6 +49,7 @@ func newLink(r Route, connectionToClient net.Conn, connectionToService net.Conn)
 		route:       r,
 		clientConn:  connectionToClient,
 		serviceConn: connectionToService,
+		stats:       TransportStats{},
 	}
 	l.resetTransport()
 	// take the config from the route if given
@@ -56,11 +73,12 @@ func (l *link) resetTransport() {
 }
 
 func (l link) String() string {
-	return fmt.Sprintf("[%s] %d: %s (s=%v,r=%v) <-> %s (s=%v,r=%v,d=%d,v=%v)",
+	return fmt.Sprintf("[%s] %d: %s (s=%v,r=%v) <-> %s (s=%v,r=%v,d=%d,v=%v) [%s]",
 		l.route.Label, l.ID,
 		l.clientConn.RemoteAddr().String(), l.transport.SendingToService, l.transport.ReceivingFromService,
 		l.serviceConn.RemoteAddr().String(), l.transport.SendingToClient, l.transport.ReceivingFromClient,
-		l.transport.DelayServiceResponse, l.transport.Verbose)
+		l.transport.DelayServiceResponse, l.transport.Verbose,
+		l.stats.String())
 }
 
 func (l *link) disconnect() error {

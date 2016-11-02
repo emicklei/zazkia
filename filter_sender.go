@@ -24,5 +24,5 @@ func (s sender) Write(link *link, w io.Writer, p parcel) (parcel, error) {
 		offset += written
 		towrite -= written
 	}
-	return emptyParcel, nil
+	return parcel{[]byte{}, p.read, p.read}, nil
 }

@@ -13,7 +13,7 @@ import (
 var (
 	oVerbose    = flag.Bool("v", false, "verbose logging")
 	oAdminPort  = flag.Int("p", 9191, "port on which the admin http server will listen")
-	oConfigfile = flag.String("f", "routes.json", "route definition")
+	oConfigfile = flag.String("f", "zazkia-routes.json", "route definition")
 
 	routeMgr routeManager
 	linkMgr  = newLinkManager()
@@ -87,7 +87,7 @@ func handleConnection(route Route, clientConn net.Conn) {
 	log.Printf("start handling client(%v) <-> remote(%v)\n", addr, remoteConn.RemoteAddr())
 	// remote <- client
 	go func() {
-		if err := transport(link, remoteConn, clientConn, !ReadsFromService); err != nil {
+		if err := transport(link, remoteConn, clientConn, !AccessesService); err != nil {
 			log.Printf("failed to copy from client to remote:%v", err)
 		}
 		log.Printf("stopped writing to remote (%v), reading from client(%v)\n", addr, clientConn.RemoteAddr())
@@ -95,7 +95,7 @@ func handleConnection(route Route, clientConn net.Conn) {
 	}()
 	// client <- remote
 	go func() {
-		if err := transport(link, clientConn, remoteConn, ReadsFromService); err != nil {
+		if err := transport(link, clientConn, remoteConn, AccessesService); err != nil {
 			log.Printf("failed to copy from remote to client:%v", err)
 		}
 		log.Printf("stopped reading from remote (%v), writing to client (%v)\n", addr, clientConn.RemoteAddr())
