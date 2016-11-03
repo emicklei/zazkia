@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"net/http"
 	"regexp"
 	"strconv"
@@ -9,8 +10,14 @@ import (
 var linksMatcher = regexp.MustCompile("/links/(\\d*)/(.+)")
 
 func (l linkResource) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path == "/" {
+		w.Header().Set("Content-Type", "text/html")
+		adminPage.Execute(w, linkMgr.APIGroups())
+		return
+	}
 	if r.URL.Path == "/links" {
-		adminPage.Execute(w, linkMgr.sortedLinks())
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(linkMgr.APIGroups())
 		return
 	}
 	tokens := linksMatcher.FindStringSubmatch(r.URL.Path)
@@ -35,10 +42,10 @@ func (l linkResource) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	case "toggle-verbose":
 		l.toggleVerbose(id, w, r)
 	default:
-		gotoLinks(w, r)
+		goHome(w, r)
 	}
 }
 
-func gotoLinks(w http.ResponseWriter, r *http.Request) {
-	http.Redirect(w, r, "/links", http.StatusSeeOther)
+func goHome(w http.ResponseWriter, r *http.Request) {
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }

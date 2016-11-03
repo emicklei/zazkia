@@ -30,16 +30,6 @@ func (m *linkManager) remove(l *link) {
 	delete(m.links, l.ID)
 }
 
-func (m *linkManager) sortedLinks() []*link {
-	m.mutex.Lock()
-	defer m.mutex.Unlock()
-	sorted := []*link{}
-	for _, each := range m.links {
-		sorted = append(sorted, each)
-	}
-	return sorted
-}
-
 func (m *linkManager) get(id int) *link {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
@@ -64,4 +54,24 @@ func (m *linkManager) close() {
 	for _, each := range m.links {
 		m.disconnectAndRemove(each.ID)
 	}
+}
+
+func (m *linkManager) APIGroups() []*APILinkGroup {
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+	gm := map[string]*APILinkGroup{}
+	for _, each := range m.links {
+		g, ok := gm[each.route.Label]
+		if !ok {
+			g = new(APILinkGroup)
+			g.Route = each.route
+			gm[each.route.Label] = g
+		}
+		g.Links = append(g.Links, NewAPILink(each))
+	}
+	all := []*APILinkGroup{}
+	for _, each := range gm {
+		all = append(all, each)
+	}
+	return all
 }

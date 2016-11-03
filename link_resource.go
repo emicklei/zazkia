@@ -1,14 +1,14 @@
 package main
 
-import "net/http"
+import (
+	"errors"
+	"fmt"
+	"net/http"
+	"strconv"
+)
 
 type linkResource struct {
 	manager *linkManager
-}
-
-func (l linkResource) showLinks(id int, w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/html")
-	adminPage.Execute(w, l.manager.sortedLinks())
 }
 
 func (l linkResource) close(id int, w http.ResponseWriter, r *http.Request) {
@@ -20,7 +20,7 @@ func (l linkResource) close(id int, w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-	gotoLinks(w, r)
+	goHome(w, r)
 }
 
 func (l linkResource) delayResponse(id int, w http.ResponseWriter, r *http.Request) {
@@ -32,9 +32,24 @@ func (l linkResource) delayResponse(id int, w http.ResponseWriter, r *http.Reque
 	if link.transport.DelayServiceResponse > 0 {
 		link.transport.DelayServiceResponse = 0
 	} else {
-		link.transport.DelayServiceResponse = 10000 // 10 sec
+		if err := r.ParseForm(); err != nil {
+			w.WriteHeader(400)
+			fmt.Fprintf(w, err.Error())
+			return
+		}
+		ms := r.Form.Get("ms")
+		msi, err := strconv.Atoi(ms)
+		if msi < 0 {
+			err = errors.New("ms parameter cannot be negative")
+		}
+		if err != nil {
+			w.WriteHeader(400)
+			fmt.Fprintf(w, err.Error())
+			return
+		}
+		link.transport.DelayServiceResponse = msi
 	}
-	gotoLinks(w, r)
+	goHome(w, r)
 }
 
 func (l linkResource) toggleSend(id int, w http.ResponseWriter, r *http.Request) {
@@ -44,7 +59,7 @@ func (l linkResource) toggleSend(id int, w http.ResponseWriter, r *http.Request)
 	}
 	link.transport.SendingToClient = !link.transport.SendingToClient
 	link.transport.SendingToService = !link.transport.SendingToService
-	gotoLinks(w, r)
+	goHome(w, r)
 }
 
 func (l linkResource) toggleVerbose(id int, w http.ResponseWriter, r *http.Request) {
@@ -53,7 +68,7 @@ func (l linkResource) toggleVerbose(id int, w http.ResponseWriter, r *http.Reque
 		return
 	}
 	link.transport.Verbose = !link.transport.Verbose
-	gotoLinks(w, r)
+	goHome(w, r)
 }
 
 func (l linkResource) toggleReceive(id int, w http.ResponseWriter, r *http.Request) {
@@ -63,7 +78,7 @@ func (l linkResource) toggleReceive(id int, w http.ResponseWriter, r *http.Reque
 	}
 	link.transport.ReceivingFromClient = !link.transport.ReceivingFromClient
 	link.transport.ReceivingFromService = !link.transport.ReceivingFromService
-	gotoLinks(w, r)
+	goHome(w, r)
 }
 
 func getLink(id int, w http.ResponseWriter, r *http.Request) *link {

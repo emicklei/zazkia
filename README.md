@@ -75,4 +75,41 @@ Defaults (-p 9191 -f zazkia-routes.json)
 ### Dashboard
 A simple HTML dashboard is available to change the transport behavior of individual links.
 
-	http://localhost:9191/links
+	http://localhost:9191
+	
+	
+### REST API
+
+Get all links
+
+	GET http://localhost:9191/links
+
+example response
+
+
+
+Close link
+
+	POST http://localhost:9191/links/1/close
+	
+
+Delay transport of response data from service to client (parameter "ms" in milliseconds)
+
+	POST http://localhost:9191/links/1/delay-response	?ms=1000
+
+	
+Toggle enable receive via link (both from client and service)	
+
+	POST http://localhost:9191/links/1/toggle-receive
+	
+		
+Toggle enable send via link (both to client and service)	
+
+	POST http://localhost:9191/links/1/toggle-send
+	
+
+Toggle verbose logging of data transport via link
+
+	POST http://localhost:9191/links/1/toggle-verbose
+		
+	

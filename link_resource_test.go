@@ -96,7 +96,7 @@ func TestReceive(t *testing.T) {
 
 func TestDelayResponse(t *testing.T) {
 	w := httptest.NewRecorder()
-	r, _ := http.NewRequest("GET", "/links/0/delay-response", nil)
+	r, _ := http.NewRequest("GET", "/links/0/delay-response?ms=100", nil)
 	m := linkResource{linkMgr}
 	// add link 0
 	link := new(link)
@@ -111,7 +111,7 @@ func TestDelayResponse(t *testing.T) {
 	if got, want := w.Code, 303; got != want {
 		t.Errorf("got %v want %v", got, want)
 	}
-	if got, want := link.transport.DelayServiceResponse, 10000; got != want {
+	if got, want := link.transport.DelayServiceResponse, 100; got != want {
 		t.Errorf("got %v want %v", got, want)
 	}
 }

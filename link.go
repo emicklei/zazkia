@@ -29,18 +29,18 @@ type link struct {
 }
 
 type TransportStats struct {
-	bytesSentToService       int64
-	bytesSentToClient        int64
-	bytesReceivedFromClient  int64
-	bytesReceivedFromService int64
+	BytesSentToService       int64 `json:"bytesSentToService"`
+	BytesSentToClient        int64 `json:"bytesSentToClient"`
+	BytesReceivedFromClient  int64 `json:"bytesReceivedFromClient"`
+	BytesReceivedFromService int64 `json:"bytesReceivedFromService"`
 }
 
 func (t TransportStats) String() string {
 	return fmt.Sprintf("client sent:%d,service recv:%d,service sent:%d,client recv:%d",
-		t.bytesReceivedFromClient,
-		t.bytesSentToService,
-		t.bytesReceivedFromService,
-		t.bytesSentToClient)
+		t.BytesReceivedFromClient,
+		t.BytesSentToService,
+		t.BytesReceivedFromService,
+		t.BytesSentToClient)
 }
 
 func newLink(r Route, connectionToClient net.Conn, connectionToService net.Conn) *link {
@@ -89,4 +89,18 @@ func (l *link) disconnect() error {
 		return l.serviceConn.Close()
 	}
 	return nil
+}
+
+type APILink struct {
+	ID    int            `json:"id"`
+	State TransportState `json:"state"`
+	Stats TransportStats `json:"stats"`
+}
+
+func NewAPILink(l *link) APILink {
+	return APILink{
+		ID:    l.ID,
+		State: l.transport,
+		Stats: l.stats,
+	}
 }

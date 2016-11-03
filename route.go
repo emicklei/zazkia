@@ -9,7 +9,7 @@ import (
 
 // Route represents the specification of a listener and client for connections (link).
 type Route struct {
-	Label           string
+	Label           string          `json:"label"`
 	ServiceHostname string          `json:"service-hostname"`
 	ServicePort     int             `json:"service-port"`
 	ListenPort      int             `json:"listen-port"`
