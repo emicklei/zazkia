@@ -13,11 +13,11 @@ func transport(link *link, w io.Writer, r io.Reader, readsFromService bool) erro
 		// writes to client
 		writers = append(writers,
 			clientAccess{},
-			logger{!AccessesService},
 			corrupter{},
 			delayer{},
 			throttler{},
 			sender{},
+			logger{!AccessesService},
 			counter{!AccessesService})
 	} else {
 		// reads from client
@@ -26,8 +26,8 @@ func transport(link *link, w io.Writer, r io.Reader, readsFromService bool) erro
 		// note: no corrupter,delayer or throttler here
 		writers = append(writers,
 			serviceAccess{},
-			logger{AccessesService},
 			sender{},
+			logger{AccessesService},
 			counter{AccessesService})
 	}
 	for {

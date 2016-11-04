@@ -1,14 +1,21 @@
 package main
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 )
 
 type linkResource struct {
 	manager *linkManager
+}
+
+func (l linkResource) links(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(linkMgr.APIGroups())
 }
 
 func (l linkResource) close(id int, w http.ResponseWriter, r *http.Request) {
@@ -43,6 +50,7 @@ func (l linkResource) delayResponse(id int, w http.ResponseWriter, r *http.Reque
 			err = errors.New("ms parameter cannot be negative")
 		}
 		if err != nil {
+			log.Println(err.Error())
 			w.WriteHeader(400)
 			fmt.Fprintf(w, err.Error())
 			return
@@ -52,13 +60,39 @@ func (l linkResource) delayResponse(id int, w http.ResponseWriter, r *http.Reque
 	goHome(w, r)
 }
 
-func (l linkResource) toggleSend(id int, w http.ResponseWriter, r *http.Request) {
+func (l linkResource) toggleReadsClient(id int, w http.ResponseWriter, r *http.Request) {
+	link := getLink(id, w, r)
+	if link == nil {
+		return
+	}
+	link.transport.ReceivingFromClient = !link.transport.ReceivingFromClient
+	goHome(w, r)
+}
+
+func (l linkResource) toggleWritesService(id int, w http.ResponseWriter, r *http.Request) {
+	link := getLink(id, w, r)
+	if link == nil {
+		return
+	}
+	link.transport.SendingToService = !link.transport.SendingToService
+	goHome(w, r)
+}
+
+func (l linkResource) toggleReadsService(id int, w http.ResponseWriter, r *http.Request) {
+	link := getLink(id, w, r)
+	if link == nil {
+		return
+	}
+	link.transport.ReceivingFromService = !link.transport.ReceivingFromService
+	goHome(w, r)
+}
+
+func (l linkResource) toggleWritesClient(id int, w http.ResponseWriter, r *http.Request) {
 	link := getLink(id, w, r)
 	if link == nil {
 		return
 	}
 	link.transport.SendingToClient = !link.transport.SendingToClient
-	link.transport.SendingToService = !link.transport.SendingToService
 	goHome(w, r)
 }
 
@@ -71,19 +105,19 @@ func (l linkResource) toggleVerbose(id int, w http.ResponseWriter, r *http.Reque
 	goHome(w, r)
 }
 
-func (l linkResource) toggleReceive(id int, w http.ResponseWriter, r *http.Request) {
+func (l linkResource) stats(id int, w http.ResponseWriter, r *http.Request) {
 	link := getLink(id, w, r)
 	if link == nil {
 		return
 	}
-	link.transport.ReceivingFromClient = !link.transport.ReceivingFromClient
-	link.transport.ReceivingFromService = !link.transport.ReceivingFromService
-	goHome(w, r)
+	w.Header().Set("content-type", "application/json")
+	json.NewEncoder(w).Encode(link.stats)
 }
 
 func getLink(id int, w http.ResponseWriter, r *http.Request) *link {
 	link := linkMgr.get(id)
 	if link == nil {
+		log.Println("no link with id", id)
 		http.NotFound(w, r)
 		return nil
 	}

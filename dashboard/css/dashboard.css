@@ -1,0 +1,12 @@
+body {
+  padding-top: 50px;
+}
+.starter-template {
+  padding: 40px 15px;
+  text-align: left;
+}
+.route {
+	color: #888;
+	padding: 4px;
+	font-size: larger;
+}

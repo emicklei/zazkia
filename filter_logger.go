@@ -11,6 +11,9 @@ type logger struct {
 }
 
 func (l logger) Read(link *link, r io.Reader, p parcel) (parcel, error) {
+	if p.read == 0 {
+		return p, nil
+	}
 	if link.transport.Verbose {
 		src := "client"
 		if l.accessService {
@@ -26,15 +29,18 @@ func (l logger) Read(link *link, r io.Reader, p parcel) (parcel, error) {
 }
 
 func (l logger) Write(link *link, w io.Writer, p parcel) (parcel, error) {
+	if p.written == 0 {
+		return p, nil
+	}
 	if link.transport.Verbose {
 		target := "client"
 		if l.accessService {
 			target = "service"
 		}
-		log.Printf("[%s.%d] written %d bytes to %s", link.route.Label, link.ID, p.read, target)
+		log.Printf("[%s.%d] written %d bytes to %s", link.route.Label, link.ID, p.written, target)
 		if !l.accessService {
 			// only log what is written to the client
-			log.Println(printable(p.data[:p.read]))
+			log.Println(printable(p.data[:p.written]))
 		}
 	}
 	return p, nil

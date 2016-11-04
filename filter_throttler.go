@@ -23,5 +23,5 @@ func (t throttler) Write(link *link, w io.Writer, p parcel) (parcel, error) {
 			return p, err
 		}
 	}
-	return emptyParcel, nil
+	return p, nil
 }

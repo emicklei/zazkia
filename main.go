@@ -49,6 +49,8 @@ func main() {
 
 	log.Printf("start http listening on :%d\n", *oAdminPort)
 
+	http.HandleFunc("/index.html", dashboardResource{}.index)
+	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("dashboard"))))
 	http.Handle("/", linkResource{linkMgr})
 
 	log.Println(http.ListenAndServe(fmt.Sprintf(":%d", *oAdminPort), nil))

@@ -38,9 +38,31 @@ func TestVerbose(t *testing.T) {
 	}
 }
 
-func TestSend(t *testing.T) {
+func TestWritesService(t *testing.T) {
 	w := httptest.NewRecorder()
-	r, _ := http.NewRequest("GET", "/links/0/toggle-send", nil)
+	r, _ := http.NewRequest("GET", "/links/0/toggle-writes-service", nil)
+	m := linkResource{linkMgr}
+	// add link 0
+	link := new(link)
+	link.resetTransport()
+	linkMgr = newLinkManager()
+	linkMgr.add(link)
+	if got, want := link.transport.SendingToService, true; got != want {
+		t.Errorf("got %v want %v", got, want)
+	}
+	// serve
+	m.ServeHTTP(w, r)
+	if got, want := w.Code, 303; got != want {
+		t.Errorf("got %v want %v", got, want)
+	}
+	if got, want := link.transport.SendingToService, false; got != want {
+		t.Errorf("got %v want %v", got, want)
+	}
+}
+
+func TestWritesClient(t *testing.T) {
+	w := httptest.NewRecorder()
+	r, _ := http.NewRequest("GET", "/links/0/toggle-writes-client", nil)
 	m := linkResource{linkMgr}
 	// add link 0
 	link := new(link)
@@ -50,18 +72,12 @@ func TestSend(t *testing.T) {
 	if got, want := link.transport.SendingToClient, true; got != want {
 		t.Errorf("got %v want %v", got, want)
 	}
-	if got, want := link.transport.SendingToService, true; got != want {
-		t.Errorf("got %v want %v", got, want)
-	}
 	// serve
 	m.ServeHTTP(w, r)
 	if got, want := w.Code, 303; got != want {
 		t.Errorf("got %v want %v", got, want)
 	}
 	if got, want := link.transport.SendingToClient, false; got != want {
-		t.Errorf("got %v want %v", got, want)
-	}
-	if got, want := link.transport.SendingToService, false; got != want {
 		t.Errorf("got %v want %v", got, want)
 	}
 }

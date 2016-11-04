@@ -1,7 +1,7 @@
 package main
 
 import (
-	"encoding/json"
+	"log"
 	"net/http"
 	"regexp"
 	"strconv"
@@ -11,17 +11,15 @@ var linksMatcher = regexp.MustCompile("/links/(\\d*)/(.+)")
 
 func (l linkResource) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path == "/" {
-		w.Header().Set("Content-Type", "text/html")
-		adminPage.Execute(w, linkMgr.APIGroups())
+		http.Redirect(w, r, "/index.html", http.StatusMovedPermanently)
 		return
 	}
 	if r.URL.Path == "/links" {
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(linkMgr.APIGroups())
+		l.links(w, r)
 		return
 	}
 	tokens := linksMatcher.FindStringSubmatch(r.URL.Path)
-	if len(tokens) != 3 {
+	if len(tokens) < 3 {
 		http.NotFound(w, r)
 		return
 	}
@@ -35,13 +33,20 @@ func (l linkResource) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		l.close(id, w, r)
 	case "delay-response":
 		l.delayResponse(id, w, r)
-	case "toggle-receive":
-		l.toggleReceive(id, w, r)
-	case "toggle-send":
-		l.toggleSend(id, w, r)
+	case "toggle-reads-client":
+		l.toggleReadsClient(id, w, r)
+	case "toggle-reads-service":
+		l.toggleReadsService(id, w, r)
+	case "toggle-writes-client":
+		l.toggleWritesClient(id, w, r)
+	case "toggle-writes-service":
+		l.toggleWritesService(id, w, r)
 	case "toggle-verbose":
 		l.toggleVerbose(id, w, r)
+	case "stats":
+		l.stats(id, w, r)
 	default:
+		log.Println("unknown command", tokens[2])
 		goHome(w, r)
 	}
 }
