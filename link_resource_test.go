@@ -84,7 +84,7 @@ func TestWritesClient(t *testing.T) {
 
 func TestReceive(t *testing.T) {
 	w := httptest.NewRecorder()
-	r, _ := http.NewRequest("GET", "/links/0/toggle-receive", nil)
+	r, _ := http.NewRequest("GET", "/links/0/toggle-reads-client", nil)
 	m := linkResource{linkMgr}
 	// add link 0
 	link := new(link)
@@ -94,18 +94,12 @@ func TestReceive(t *testing.T) {
 	if got, want := link.transport.ReceivingFromClient, true; got != want {
 		t.Errorf("got %v want %v", got, want)
 	}
-	if got, want := link.transport.ReceivingFromService, true; got != want {
-		t.Errorf("got %v want %v", got, want)
-	}
 	// serve
 	m.ServeHTTP(w, r)
 	if got, want := w.Code, 303; got != want {
 		t.Errorf("got %v want %v", got, want)
 	}
 	if got, want := link.transport.ReceivingFromClient, false; got != want {
-		t.Errorf("got %v want %v", got, want)
-	}
-	if got, want := link.transport.ReceivingFromService, false; got != want {
 		t.Errorf("got %v want %v", got, want)
 	}
 }
