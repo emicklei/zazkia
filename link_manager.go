@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"log"
+	"sort"
 	"sync"
 )
 
@@ -33,7 +34,10 @@ func (m *linkManager) remove(l *link) {
 func (m *linkManager) get(id int) *link {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
-	l, _ := m.links[id]
+	l, ok := m.links[id]
+	if !ok {
+		return nil
+	}
 	return l
 }
 
@@ -44,7 +48,7 @@ func (m *linkManager) disconnectAndRemove(id int) error {
 	if !ok {
 		return errors.New("no link with id")
 	}
-	log.Println("disconnecting", link.ID)
+	log.Printf("[%s] disconnecting link d%\n", link.route.Label, link.ID)
 	link.disconnect()
 	delete(m.links, link.ID)
 	return nil
@@ -71,7 +75,35 @@ func (m *linkManager) APIGroups() []*APILinkGroup {
 	}
 	all := []*APILinkGroup{}
 	for _, each := range gm {
+		sort.Sort(APILinkSorter(each.Links))
 		all = append(all, each)
 	}
+	sort.Sort(APILinkGroupSorter(all))
 	return all
+}
+
+type APILinkGroupSorter []*APILinkGroup
+
+func (s APILinkGroupSorter) Len() int {
+	return len(s)
+}
+func (s APILinkGroupSorter) Swap(i, j int) {
+	s[i], s[j] = s[j], s[i]
+}
+func (s APILinkGroupSorter) Less(i, j int) bool {
+	a, b := s[i], s[j]
+	return a.Route.Label < b.Route.Label
+}
+
+type APILinkSorter []APILink
+
+func (s APILinkSorter) Len() int {
+	return len(s)
+}
+func (s APILinkSorter) Swap(i, j int) {
+	s[i], s[j] = s[j], s[i]
+}
+func (s APILinkSorter) Less(i, j int) bool {
+	a, b := s[i], s[j]
+	return a.ID < b.ID
 }

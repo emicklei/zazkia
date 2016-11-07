@@ -32,7 +32,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="http://github.com/emickei/zazkia" target="_blank">github.com/emickei/zazkia</a>
+          <a class="navbar-brand" href="http://github.com/emicklei/zazkia" target="_blank">github.com/emickei/zazkia</a>
         </div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
@@ -47,7 +47,7 @@
 
       <div class="starter-template">
         <h1>Zazkia - tcp proxy</h1>
-        <p class="lead">Active connection links between clients and services.
+        <p class="lead">Active connections per route between clients and services.
 		</p>
 		<div id="links"/>
 			<ul>
@@ -61,17 +61,18 @@
 					{{ range .Links }} 
 						<p>
 						<a class="btn btn-default btn-danger"  href="/links/{{ .ID }}/close">close</a>
-						<a class="btn btn-default {{if gt .State.DelayServiceResponse 0}} btn-warning {{end}}" href="/links/{{ .ID }}/delay-response?ms=1000">delay response</a>
+						<a class="btn btn-default {{if gt .State.DelayServiceResponse 0}} btn-warning {{end}}" href="/links/{{ .ID }}/delay-response?ms=1000">delay {{if gt .State.DelayServiceResponse 0}} {{.State.DelayServiceResponse}} ms {{end}}</a>
 						<a class="btn btn-default {{if .State.ReceivingFromClient}} btn-success {{end}}" href="/links/{{ .ID }}/toggle-reads-client">reads client</a>
 						<a class="btn btn-default {{if .State.SendingToService}} btn-success {{end}}" href="/links/{{ .ID }}/toggle-writes-service">writes service</a>
 						<a class="btn btn-default {{if .State.ReceivingFromService}} btn-success {{end}}" href="/links/{{ .ID }}/toggle-reads-service">reads service</a>
 						<a class="btn btn-default {{if .State.SendingToClient}} btn-success {{end}}" href="/links/{{ .ID }}/toggle-writes-client">writes client</a>						
 						<a class="btn btn-default {{if .State.Verbose}} btn-info {{end}}" href="/links/{{ .ID }}/toggle-verbose">trace</a>
 						<div class="stats">
-							{{ .Stats.BytesReceivedFromClient}} bytes sent by client
-							{{ .Stats.BytesSentToService}} bytes sent to service
-							{{ .Stats.BytesReceivedFromService}} bytes received from service
-							{{ .Stats.BytesSentToClient}} bytes sent to client
+							client  {{if .State.ReceivingFromClient}} &#8658; {{else}} &#8655; {{end}} {{ .Stats.BytesReceivedFromClient}} &#8658;
+							zazkia  {{if .State.SendingToService}} &#8658; {{else}} &#8655; {{end}} {{ .Stats.BytesSentToService}} &#8658;
+							service {{if .State.ReceivingFromService}} &#8658; {{else}} &#8655; {{end}} {{ .Stats.BytesReceivedFromService}} &#8658;
+							zazkia  {{if .State.SendingToClient}} &#8658; {{else}} &#8655; {{end}} {{ .Stats.BytesSentToClient}} &#8658;
+							client
 						</div>
 						</p>
 					{{ end }}
@@ -83,8 +84,9 @@
       </div>
 
     </div><!-- /.container -->
-	 <script src="/static/jquery/jquery-3.1.1.min.js"></script>	
+	<script src="/static/jquery/jquery-3.1.1.min.js"></script>	
     <script src="/static/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>	
+	<script src="/static/js/dashboard.js"></script>	
 	
   </body>
 </html>

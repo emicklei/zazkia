@@ -8,7 +8,8 @@ import (
 var indexPage *template.Template
 
 func init() {
-	indexPage = template.Must(template.New("index.html").ParseFiles("dashboard/templates/index.html"))
+	t, _ := Asset("dashboard/templates/index.html")
+	indexPage = template.Must(template.New("index.html").Parse(string(t)))
 }
 
 type dashboardResource struct {

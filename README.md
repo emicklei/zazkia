@@ -63,7 +63,8 @@ Full zazkia-routes.json example
 
 To build the project locally and test it.
 
-	go test -v
+	go generate
+	go test
 	go build
 
 ## Run
@@ -83,10 +84,7 @@ A simple HTML dashboard is available to change the transport behavior of individ
 Get all links
 
 	GET http://localhost:9191/links
-
-example response
-
-
+	
 
 Close link
 
@@ -98,18 +96,20 @@ Delay transport of response data from service to client (parameter "ms" in milli
 	POST http://localhost:9191/links/1/delay-response	?ms=1000
 
 	
-Toggle enable receive via link (both from client and service)	
+Toggle enable receive or sent via link (both from client and service)	
 
-	POST http://localhost:9191/links/1/toggle-receive
-	
-		
-Toggle enable send via link (both to client and service)	
+	POST http://localhost:9191/links/1/toggle-reads-client
+	POST http://localhost:9191/links/1/toggle-writes-service
+	POST http://localhost:9191/links/1/toggle-reads-service
+	POST http://localhost:9191/links/1/toggle-writes-client	
 
-	POST http://localhost:9191/links/1/toggle-send
-	
 
 Toggle verbose logging of data transport via link
 
 	POST http://localhost:9191/links/1/toggle-verbose
+
 		
+Get transport statistics of a link
+
+	GET http://localhost:9191/links/1/stats
 	

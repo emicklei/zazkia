@@ -1,5 +1,7 @@
 package main
 
+//go:generate go-bindata -pkg main dashboard/...
+
 import (
 	"flag"
 	"fmt"
@@ -8,6 +10,8 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+
+	"github.com/elazarl/go-bindata-assetfs"
 )
 
 var (
@@ -50,7 +54,8 @@ func main() {
 	log.Printf("start http listening on :%d\n", *oAdminPort)
 
 	http.HandleFunc("/index.html", dashboardResource{}.index)
-	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("dashboard"))))
+	dashboard := &assetfs.AssetFS{Asset: Asset, AssetDir: AssetDir, AssetInfo: AssetInfo, Prefix: "dashboard"}
+	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(dashboard)))
 	http.Handle("/", linkResource{linkMgr})
 
 	log.Println(http.ListenAndServe(fmt.Sprintf(":%d", *oAdminPort), nil))
@@ -77,30 +82,30 @@ func acceptConnections(route Route, ln net.Listener) {
 
 func handleConnection(route Route, clientConn net.Conn) {
 	addr := clientConn.RemoteAddr().String()
-	remoteConn, err := net.Dial("tcp", route.tcp())
+	serviceConn, err := net.Dial("tcp", route.tcp())
 	if err != nil {
 		log.Printf("[%s] failed to connect to remote:%v", route.Label, err)
 		return
 	}
 
-	link := newLink(route, clientConn, remoteConn)
+	link := newLink(route, clientConn, serviceConn)
 	linkMgr.add(link)
 
-	log.Printf("start handling client(%v) <-> remote(%v)\n", addr, remoteConn.RemoteAddr())
-	// remote <- client
+	log.Printf("[%s] start handling client(%v) <=> service(%v)\n", route.Label, addr, serviceConn.RemoteAddr())
+	// service <- client
 	go func() {
-		if err := transport(link, remoteConn, clientConn, !AccessesService); err != nil {
-			log.Printf("failed to copy from client to remote:%v", err)
+		if err := transport(link, serviceConn, clientConn, !AccessesService); err != nil {
+			log.Printf("[%s] failed to copy from client to service:%v", route.Label, err)
 		}
-		log.Printf("stopped writing to remote (%v), reading from client(%v)\n", addr, clientConn.RemoteAddr())
-		linkMgr.disconnectAndRemove(link.ID)
+		log.Printf("[%s] stopped writing to service (%v), reading from client(%v)\n", route.Label, addr, clientConn.RemoteAddr())
+		//linkMgr.disconnectAndRemove(link.ID)
 	}()
-	// client <- remote
+	// client <- service
 	go func() {
-		if err := transport(link, clientConn, remoteConn, AccessesService); err != nil {
-			log.Printf("failed to copy from remote to client:%v", err)
+		if err := transport(link, clientConn, serviceConn, AccessesService); err != nil {
+			log.Printf("[%s] failed to copy from service to client:%v", route.Label, err)
 		}
-		log.Printf("stopped reading from remote (%v), writing to client (%v)\n", addr, clientConn.RemoteAddr())
-		linkMgr.disconnectAndRemove(link.ID)
+		log.Printf("[%s] stopped reading from service (%v), writing to client (%v)\n", route.Label, addr, clientConn.RemoteAddr())
+		//linkMgr.disconnectAndRemove(link.ID)
 	}()
 }
