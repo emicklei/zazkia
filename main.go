@@ -98,7 +98,6 @@ func handleConnection(route Route, clientConn net.Conn) {
 			log.Printf("[%s] failed to copy from client to service:%v", route.Label, err)
 		}
 		log.Printf("[%s] stopped writing to service (%v), reading from client(%v)\n", route.Label, addr, clientConn.RemoteAddr())
-		//linkMgr.disconnectAndRemove(link.ID)
 	}()
 	// client <- service
 	go func() {
@@ -106,6 +105,5 @@ func handleConnection(route Route, clientConn net.Conn) {
 			log.Printf("[%s] failed to copy from service to client:%v", route.Label, err)
 		}
 		log.Printf("[%s] stopped reading from service (%v), writing to client (%v)\n", route.Label, addr, clientConn.RemoteAddr())
-		//linkMgr.disconnectAndRemove(link.ID)
 	}()
 }

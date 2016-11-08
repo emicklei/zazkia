@@ -93,7 +93,7 @@ Close link
 
 Delay transport of response data from service to client (parameter "ms" in milliseconds)
 
-	POST http://localhost:9191/links/1/delay-response	?ms=1000
+	POST http://localhost:9191/links/1/delay-response?ms=1000
 
 	
 Toggle enable receive or sent via link (both from client and service)	

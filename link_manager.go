@@ -48,7 +48,7 @@ func (m *linkManager) disconnectAndRemove(id int) error {
 	if !ok {
 		return errors.New("no link with id")
 	}
-	log.Printf("[%s] disconnecting link d%\n", link.route.Label, link.ID)
+	log.Printf("[%s] disconnecting link %d\n", link.route.Label, link.ID)
 	link.disconnect()
 	delete(m.links, link.ID)
 	return nil
