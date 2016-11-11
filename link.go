@@ -20,12 +20,14 @@ func init() {
 }
 
 type link struct {
-	ID          int
-	route       Route
-	clientConn  net.Conn
-	serviceConn net.Conn
-	transport   TransportState
-	stats       TransportStats
+	ID           int
+	route        Route
+	clientConn   net.Conn
+	serviceConn  net.Conn
+	transport    TransportState
+	stats        TransportStats
+	clientError  error
+	serviceError error
 }
 
 type TransportStats struct {
@@ -57,6 +59,20 @@ func newLink(r Route, connectionToClient net.Conn, connectionToService net.Conn)
 		l.transport = *r.Transport
 	}
 	return l
+}
+
+func (l *link) clientErrorString() string {
+	if l.clientError == nil {
+		return ""
+	}
+	return l.clientError.Error()
+}
+
+func (l *link) serviceErrorString() string {
+	if l.serviceError == nil {
+		return ""
+	}
+	return l.serviceError.Error()
 }
 
 func (l *link) resetTransport() {
@@ -92,15 +108,19 @@ func (l *link) disconnect() error {
 }
 
 type APILink struct {
-	ID    int            `json:"id"`
-	State TransportState `json:"state"`
-	Stats TransportStats `json:"stats"`
+	ID           int            `json:"id"`
+	State        TransportState `json:"state"`
+	Stats        TransportStats `json:"stats"`
+	ClientError  string         `json:"clientError,omitempty"`
+	ServiceError string         `json:"serviceError,omitempty"`
 }
 
 func NewAPILink(l *link) APILink {
 	return APILink{
-		ID:    l.ID,
-		State: l.transport,
-		Stats: l.stats,
+		ID:           l.ID,
+		State:        l.transport,
+		Stats:        l.stats,
+		ClientError:  l.clientErrorString(),
+		ServiceError: l.serviceErrorString(),
 	}
 }

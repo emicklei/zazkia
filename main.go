@@ -91,19 +91,19 @@ func handleConnection(route Route, clientConn net.Conn) {
 	link := newLink(route, clientConn, serviceConn)
 	linkMgr.add(link)
 
-	log.Printf("[%s] start handling client(%v) <=> service(%v)\n", route.Label, addr, serviceConn.RemoteAddr())
+	log.Printf("[%s:%d] start handling client(%v) <=> service(%v)\n", route.Label, link.ID, addr, serviceConn.RemoteAddr())
 	// service <- client
 	go func() {
 		if err := transport(link, serviceConn, clientConn, !AccessesService); err != nil {
-			log.Printf("[%s] failed to copy from client to service:%v", route.Label, err)
+			log.Printf("[%s:%d] stopped writing to service (%v), reading from client(%v), with error (%v)\n", route.Label, link.ID, addr, clientConn.RemoteAddr(), err)
+			link.clientError = err
 		}
-		log.Printf("[%s] stopped writing to service (%v), reading from client(%v)\n", route.Label, addr, clientConn.RemoteAddr())
 	}()
 	// client <- service
 	go func() {
 		if err := transport(link, clientConn, serviceConn, AccessesService); err != nil {
-			log.Printf("[%s] failed to copy from service to client:%v", route.Label, err)
+			log.Printf("[%s:%d] stopped reading from service (%v), writing to client (%v), with error (%v)\n", route.Label, link.ID, addr, clientConn.RemoteAddr(), err)
+			link.serviceError = err
 		}
-		log.Printf("[%s] stopped reading from service (%v), writing to client (%v)\n", route.Label, addr, clientConn.RemoteAddr())
 	}()
 }

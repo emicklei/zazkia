@@ -18,6 +18,10 @@ func (l linkResource) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		l.links(w, r)
 		return
 	}
+	if r.URL.Path == "/links/closeAllWithError" {
+		l.closeLinksWithError(w, r)
+		return
+	}
 	tokens := linksMatcher.FindStringSubmatch(r.URL.Path)
 	if len(tokens) < 3 {
 		http.NotFound(w, r)

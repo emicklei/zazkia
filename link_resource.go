@@ -18,6 +18,11 @@ func (l linkResource) links(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(linkMgr.APIGroups())
 }
 
+func (l linkResource) closeLinksWithError(w http.ResponseWriter, r *http.Request) {
+	l.manager.closeAllWithError()
+	goHome(w, r)
+}
+
 func (l linkResource) close(id int, w http.ResponseWriter, r *http.Request) {
 	link := getLink(id, w, r)
 	if link == nil {

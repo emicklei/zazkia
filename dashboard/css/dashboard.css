@@ -10,3 +10,10 @@ body {
 	padding: 4px;
 	font-size: larger;
 }
+.errors {
+	display:inline-block;
+	background-color: yellow;
+}
+.stats {
+	display:inline-block;
+}

@@ -60,6 +60,14 @@ func (m *linkManager) close() {
 	}
 }
 
+func (m *linkManager) closeAllWithError() {
+	for _, each := range m.links {
+		if len(each.clientErrorString()) != 0 || len(each.serviceErrorString()) > 0 {
+			m.disconnectAndRemove(each.ID)
+		}
+	}
+}
+
 func (m *linkManager) APIGroups() []*APILinkGroup {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()

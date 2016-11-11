@@ -46,9 +46,9 @@
     <div class="container-fluid">
 
       <div class="starter-template">
-        <h1>Zazkia - tcp proxy</h1>
-        <p class="lead">Active connections per route between clients and services.
-		</p>
+        <h1>Zazkia - tcp proxy for failure injection</h1>
+        <p class="lead">Connections per route between clients and services.
+		</p>		
 		<div id="links"/>
 			<ul>
 			<!-- apigroups -->
@@ -60,13 +60,19 @@
 					<ol>
 					{{ range .Links }} 
 						<p>
-						<a class="btn btn-default btn-danger"  href="/links/{{ .ID }}/close">close</a>
+						<a class="btn btn-default btn-danger" href="/links/{{ .ID }}/close">close</a>
 						<a class="btn btn-default {{if gt .State.DelayServiceResponse 0}} btn-warning {{end}}" href="/links/{{ .ID }}/delay-response?ms=1000">delay {{if gt .State.DelayServiceResponse 0}} {{.State.DelayServiceResponse}} ms {{end}}</a>
-						<a class="btn btn-default {{if .State.ReceivingFromClient}} btn-success {{end}}" href="/links/{{ .ID }}/toggle-reads-client">reads client</a>
-						<a class="btn btn-default {{if .State.SendingToService}} btn-success {{end}}" href="/links/{{ .ID }}/toggle-writes-service">writes service</a>
-						<a class="btn btn-default {{if .State.ReceivingFromService}} btn-success {{end}}" href="/links/{{ .ID }}/toggle-reads-service">reads service</a>
-						<a class="btn btn-default {{if .State.SendingToClient}} btn-success {{end}}" href="/links/{{ .ID }}/toggle-writes-client">writes client</a>						
+						<a class="btn btn-default {{if .State.ReceivingFromClient}} btn-success {{end}}" href="/links/{{ .ID }}/toggle-reads-client">read client</a>
+						<a class="btn btn-default {{if .State.SendingToService}} btn-success {{end}}" href="/links/{{ .ID }}/toggle-writes-service">write service</a>
+						<a class="btn btn-default {{if .State.ReceivingFromService}} btn-success {{end}}" href="/links/{{ .ID }}/toggle-reads-service">read service</a>
+						<a class="btn btn-default {{if .State.SendingToClient}} btn-success {{end}}" href="/links/{{ .ID }}/toggle-writes-client">write client</a>						
 						<a class="btn btn-default {{if .State.Verbose}} btn-info {{end}}" href="/links/{{ .ID }}/toggle-verbose">trace</a>
+						
+						<div class="errors">
+							{{if gt (len .ClientError)  0}} client error:{{ .ClientError }} {{end}}
+							{{if gt (len .ServiceError) 0}} service error:{{ .ServiceError }} {{end}}
+						</div>
+												
 						<div class="stats">
 							client  {{if .State.ReceivingFromClient}} &#8658; {{else}} &#8655; {{end}} {{ .Stats.BytesReceivedFromClient}} &#8658;
 							zazkia  {{if .State.SendingToService}} &#8658; {{else}} &#8655; {{end}} {{ .Stats.BytesSentToService}} &#8658;
@@ -74,13 +80,16 @@
 							zazkia  {{if .State.SendingToClient}} &#8658; {{else}} &#8655; {{end}} {{ .Stats.BytesSentToClient}} &#8658;
 							client
 						</div>
-						</p>
+						</p>	
 					{{ end }}
 					</ol>
 				</li>
 			{{ end }}
 			</ul>
-		</div>		
+		</div>	<!-- links -->
+		{{ if gt (len .) 0 }}
+			<a class="btn btn-default btn-primary" href="/links/closeAllWithError">close all with error</a>	
+		{{ end }}
       </div>
 
     </div><!-- /.container -->
