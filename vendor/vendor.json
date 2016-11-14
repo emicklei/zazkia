@@ -3,9 +3,11 @@
 	"ignore": "test",
 	"package": [
 		{
+			"checksumSHA1": "bGdOim32+2dyKoQEtwW1PNwcdBc=",
 			"path": "github.com/elazarl/go-bindata-assetfs",
 			"revision": "9a6736ed45b44bf3835afeebb3034b57ed329f3e",
-			"revisionTime": "2016-08-22T23:44:01+03:00"
+			"revisionTime": "2016-08-22T20:44:01Z"
 		}
-	]
+	],
+	"rootPath": "github.com/emicklei/zazkia"
 }
