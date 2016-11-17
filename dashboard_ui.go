@@ -1,7 +1,7 @@
 package main
 
 type APILinkGroup struct {
-	Route Route     `json:"route"`
+	Route *Route    `json:"route"`
 	Links []APILink `json:"links"`
 }
 

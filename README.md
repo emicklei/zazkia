@@ -81,6 +81,10 @@ A simple HTML dashboard is available to change the transport behavior of individ
 	
 ### REST API
 
+Get all routes
+
+	GET http://localhost:9191/routes
+
 Get all links
 
 	GET http://localhost:9191/links

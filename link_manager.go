@@ -72,13 +72,17 @@ func (m *linkManager) APIGroups() []*APILinkGroup {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
 	gm := map[string]*APILinkGroup{}
-	for _, each := range m.links {
-		g, ok := gm[each.route.Label]
+	// TEMP
+	for _, each := range routeMgr.routes {
+		g, ok := gm[each.Label]
 		if !ok {
 			g = new(APILinkGroup)
-			g.Route = each.route
-			gm[each.route.Label] = g
+			g.Route = each
+			gm[each.Label] = g
 		}
+	}
+	for _, each := range m.links {
+		g, _ := gm[each.route.Label]
 		g.Links = append(g.Links, NewAPILink(each))
 	}
 	all := []*APILinkGroup{}

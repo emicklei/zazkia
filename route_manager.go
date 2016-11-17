@@ -3,14 +3,14 @@ package main
 import "errors"
 
 type routeManager struct {
-	routes []Route
+	routes []*Route
 }
 
-func (m routeManager) routeForRemoteAddress(addr string) (Route, error) {
+func (m routeManager) routeForRemoteAddress(addr string) (*Route, error) {
 	for _, each := range m.routes {
 		if each.ServiceHostname == addr {
 			return each, nil
 		}
 	}
-	return Route{}, errors.New("no route for address:" + addr)
+	return new(Route), errors.New("no route for address:" + addr)
 }

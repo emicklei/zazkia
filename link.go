@@ -21,7 +21,7 @@ func init() {
 
 type link struct {
 	ID           int
-	route        Route
+	route        *Route
 	clientConn   net.Conn
 	serviceConn  net.Conn
 	transport    TransportState
@@ -45,7 +45,7 @@ func (t TransportStats) String() string {
 		t.BytesSentToClient)
 }
 
-func newLink(r Route, connectionToClient net.Conn, connectionToService net.Conn) *link {
+func newLink(r *Route, connectionToClient net.Conn, connectionToService net.Conn) *link {
 	l := &link{
 		ID:          <-idGen,
 		route:       r,
@@ -54,10 +54,6 @@ func newLink(r Route, connectionToClient net.Conn, connectionToService net.Conn)
 		stats:       TransportStats{},
 	}
 	l.resetTransport()
-	// take the config from the route if given
-	if r.hasTransportState() {
-		l.transport = *r.Transport
-	}
 	return l
 }
 

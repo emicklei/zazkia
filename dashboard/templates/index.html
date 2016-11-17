@@ -56,7 +56,12 @@
 				<li>
 					<!-- apigroup -->
 					<h4>{{ .Route.Label }}</h4>
-					<div class="route"><strong>route</strong> localhost:{{.Route.ListenPort}} &#8660; {{.Route.ServiceHostname}}:{{.Route.ServicePort}}</div>
+					<div class="route">
+						<strong>route</strong> 
+						localhost:{{.Route.ListenPort}} &#8660; {{.Route.ServiceHostname}}:{{.Route.ServicePort}}
+						<a class="btn btn-default {{if .Route.Transport.AcceptConnections}} btn-primary {{end}}" href="/routes/{{ .Route.Label }}/toggle-accept">accept connections</a>
+					</div>
+					<p></p>
 					<ol>
 					{{ range .Links }} 
 						<p>

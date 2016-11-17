@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"time"
 
 	"github.com/elazarl/go-bindata-assetfs"
 )
@@ -53,9 +54,11 @@ func main() {
 
 	log.Printf("start http listening on :%d\n", *oAdminPort)
 
-	http.HandleFunc("/index.html", dashboardResource{}.index)
+	http.HandleFunc("/index.html", dashboardResourceIndex)
 	dashboard := &assetfs.AssetFS{Asset: Asset, AssetDir: AssetDir, AssetInfo: AssetInfo, Prefix: "dashboard"}
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(dashboard)))
+	http.Handle("/routes/", routeResource{routeMgr})
+	// TODO extract the home redirect
 	http.Handle("/", linkResource{linkMgr})
 
 	log.Println(http.ListenAndServe(fmt.Sprintf(":%d", *oAdminPort), nil))
@@ -68,9 +71,14 @@ func cleanAndExit(code int) {
 	os.Exit(code)
 }
 
-func acceptConnections(route Route, ln net.Listener) {
+func acceptConnections(route *Route, ln net.Listener) {
 	log.Printf("start tcp listening for %v", route)
 	for {
+		if !route.Transport.AcceptConnections {
+			log.Printf("not accepting new connections, retrying in 1 second")
+			time.Sleep(1 * time.Second)
+			continue
+		}
 		conn, err := ln.Accept()
 		if err != nil {
 			log.Printf("failed to accept new connections:%v", err)
@@ -80,7 +88,7 @@ func acceptConnections(route Route, ln net.Listener) {
 	}
 }
 
-func handleConnection(route Route, clientConn net.Conn) {
+func handleConnection(route *Route, clientConn net.Conn) {
 	addr := clientConn.RemoteAddr().String()
 	serviceConn, err := net.Dial("tcp", route.tcp())
 	if err != nil {
@@ -95,14 +103,14 @@ func handleConnection(route Route, clientConn net.Conn) {
 	// service <- client
 	go func() {
 		if err := transport(link, serviceConn, clientConn, !AccessesService); err != nil {
-			log.Printf("[%s:%d] stopped writing to service (%v), reading from client(%v), with error (%v)\n", route.Label, link.ID, addr, clientConn.RemoteAddr(), err)
+			log.Printf("[%s:%d] stopped writing to service (%v), reading from client(%v), with error (%v)\n", route.Label, link.ID, serviceConn.RemoteAddr(), clientConn.RemoteAddr(), err)
 			link.clientError = err
 		}
 	}()
 	// client <- service
 	go func() {
 		if err := transport(link, clientConn, serviceConn, AccessesService); err != nil {
-			log.Printf("[%s:%d] stopped reading from service (%v), writing to client (%v), with error (%v)\n", route.Label, link.ID, addr, clientConn.RemoteAddr(), err)
+			log.Printf("[%s:%d] stopped reading from service (%v), writing to client (%v), with error (%v)\n", route.Label, link.ID, serviceConn.RemoteAddr(), clientConn.RemoteAddr(), err)
 			link.serviceError = err
 		}
 	}()

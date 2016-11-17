@@ -26,9 +26,10 @@ type TransportState struct {
 	SendingToService             bool   `json:"sending-to-service"`
 	ReceivingFromService         bool   `json:"receiving-from-service"`
 	ServiceResponseCorruptMethod string `json:"service-response-corrupt-method"`
+	AcceptConnections            bool   `json:"accept-connections"`
 }
 
-func readRoutes(location string) (routes []Route, err error) {
+func readRoutes(location string) (routes []*Route, err error) {
 	log.Println("reading routes from", location)
 	f, err := os.Open(location)
 	if err != nil {
@@ -36,15 +37,17 @@ func readRoutes(location string) (routes []Route, err error) {
 	}
 	defer f.Close()
 	err = json.NewDecoder(f).Decode(&routes)
+	// make sure transport is initialized
+	for _, each := range routes {
+		if each.Transport == nil {
+			each.Transport = newDefaultTransportState()
+		}
+	}
 	return
 }
 
 func (r Route) tcp() string {
 	return fmt.Sprintf("%s:%d", r.ServiceHostname, r.ServicePort)
-}
-
-func (r Route) hasTransportState() bool {
-	return r.Transport != nil
 }
 
 func (r Route) String() string {
@@ -55,4 +58,14 @@ func (s TransportState) String() string {
 	return fmt.Sprintf("delay=%d,s2c=%v,rfc=%v,s2s=%v,rfs=%v,thr=%d,cor=%s,v=%v",
 		s.DelayServiceResponse, s.SendingToClient, s.ReceivingFromClient, s.SendingToService, s.ReceivingFromService,
 		s.ThrottleServiceResponse, s.ServiceResponseCorruptMethod, s.Verbose)
+}
+
+func newDefaultTransportState() *TransportState {
+	return &TransportState{
+		SendingToClient:      true,
+		ReceivingFromClient:  true,
+		SendingToService:     true,
+		ReceivingFromService: true,
+		AcceptConnections:    true,
+	}
 }

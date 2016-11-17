@@ -12,10 +12,7 @@ func init() {
 	indexPage = template.Must(template.New("index.html").Parse(string(t)))
 }
 
-type dashboardResource struct {
-}
-
-func (d dashboardResource) index(w http.ResponseWriter, r *http.Request) {
+func dashboardResourceIndex(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
 	indexPage.Execute(w, linkMgr.APIGroups())
 }
