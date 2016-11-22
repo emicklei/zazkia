@@ -59,7 +59,7 @@ Full zazkia-routes.json example
 | receiving-from-service | whether a response from the service is read | true, false |
 
 ### Build
-[![Build Status](https://drone.io/github.com/emicklei/zazkia/status.png?maxAge=600)](https://drone.io/github.com/emicklei/zazkia/latest)
+[![Build Status](https://drone.io/github.com/emicklei/zazkia/status.png)](https://drone.io/github.com/emicklei/zazkia/latest)
 
 To build the project locally and test it.
 
