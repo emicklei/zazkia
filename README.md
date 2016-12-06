@@ -63,6 +63,8 @@ Full zazkia-routes.json example
 
 To build the project locally and test it.
 
+	go get -u github.com/jteeuwen/go-bindata/...
+
 	go generate
 	go test
 	go build
