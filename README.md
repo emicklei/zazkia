@@ -96,6 +96,10 @@ Close link
 
 	POST http://localhost:9191/links/1/close
 	
+Toggle accept connections for route
+
+	POST http://localhost:9191/routes/{label}/toggle-accept
+		
 
 Delay transport of response data from service to client (parameter "ms" in milliseconds)
 
