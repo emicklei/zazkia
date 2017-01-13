@@ -12,6 +12,7 @@ type Route struct {
 	Label           string          `json:"label"`
 	ServiceHostname string          `json:"service-hostname"`
 	ServicePort     int             `json:"service-port"`
+	ServiceFromFile string          `json:"service-from-file"`
 	ListenPort      int             `json:"listen-port"`
 	Transport       *TransportState `json:"transport"`
 }

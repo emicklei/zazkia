@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"net"
+	"io"
 )
 
 // channel for consecutive integers to assign to new connections
@@ -22,8 +22,10 @@ func init() {
 type link struct {
 	ID           int
 	route        *Route
-	clientConn   net.Conn
-	serviceConn  net.Conn
+	clientConn   io.ReadWriteCloser
+	clientLabel  string
+	serviceConn  io.ReadWriteCloser
+	serviceLabel string
 	transport    TransportState
 	stats        TransportStats
 	clientError  error
@@ -45,7 +47,7 @@ func (t TransportStats) String() string {
 		t.BytesSentToClient)
 }
 
-func newLink(r *Route, connectionToClient net.Conn, connectionToService net.Conn) *link {
+func newLink(r *Route, connectionToClient io.ReadWriteCloser, clientLabel string, connectionToService io.ReadWriteCloser, serviceLabel string) *link {
 	l := &link{
 		ID:          <-idGen,
 		route:       r,
@@ -87,8 +89,8 @@ func (l *link) resetTransport() {
 func (l link) String() string {
 	return fmt.Sprintf("[%s] %d: %s (s=%v,r=%v) <-> %s (s=%v,r=%v,d=%d,v=%v) [%s]",
 		l.route.Label, l.ID,
-		l.clientConn.RemoteAddr().String(), l.transport.SendingToService, l.transport.ReceivingFromService,
-		l.serviceConn.RemoteAddr().String(), l.transport.SendingToClient, l.transport.ReceivingFromClient,
+		l.clientLabel, l.transport.SendingToService, l.transport.ReceivingFromService,
+		l.serviceLabel, l.transport.SendingToClient, l.transport.ReceivingFromClient,
 		l.transport.DelayServiceResponse, l.transport.Verbose,
 		l.stats.String())
 }

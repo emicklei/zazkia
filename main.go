@@ -5,6 +5,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io"
 	"log"
 	"net"
 	"net/http"
@@ -89,28 +90,37 @@ func acceptConnections(route *Route, ln net.Listener) {
 }
 
 func handleConnection(route *Route, clientConn net.Conn) {
-	addr := clientConn.RemoteAddr().String()
-	serviceConn, err := net.Dial("tcp", route.tcp())
-	if err != nil {
-		log.Printf("[%s] failed to connect to remote:%v", route.Label, err)
-		return
+	var link *link
+	var serviceConn io.ReadWriteCloser
+	var serviceLabel string
+	if len(route.ServiceFromFile) == 0 {
+		// connect to remote service
+		serviceConn, err := net.Dial("tcp", route.tcp())
+		if err != nil {
+			log.Printf("[%s] failed to connect to remote:%v", route.Label, err)
+			return
+		}
+		serviceLabel = serviceConn.RemoteAddr().String()
+		link = newLink(route, clientConn, clientConn.RemoteAddr().String(), serviceConn, serviceLabel)
+	} else {
+		// service from file
+		serviceConn = newFileConnection(route.ServiceFromFile)
+		link = newLink(route, clientConn, clientConn.RemoteAddr().String(), serviceConn, route.ServiceFromFile)
 	}
-
-	link := newLink(route, clientConn, serviceConn)
 	linkMgr.add(link)
 
-	log.Printf("[%s:%d] start handling client(%v) <=> service(%v)\n", route.Label, link.ID, addr, serviceConn.RemoteAddr())
+	log.Printf("[%s:%d] start handling client(%v) <=> service(%v)\n", route.Label, link.ID, link.clientLabel, link.serviceLabel)
 	// service <- client
 	go func() {
 		if err := transport(link, serviceConn, clientConn, !AccessesService); err != nil {
-			log.Printf("[%s:%d] stopped writing to service (%v), reading from client(%v), with error (%v)\n", route.Label, link.ID, serviceConn.RemoteAddr(), clientConn.RemoteAddr(), err)
+			log.Printf("[%s:%d] stopped writing to service (%v), reading from client(%v), with error (%v)\n", route.Label, link.ID, link.serviceLabel, link.clientLabel, err)
 			link.clientError = err
 		}
 	}()
 	// client <- service
 	go func() {
 		if err := transport(link, clientConn, serviceConn, AccessesService); err != nil {
-			log.Printf("[%s:%d] stopped reading from service (%v), writing to client (%v), with error (%v)\n", route.Label, link.ID, serviceConn.RemoteAddr(), clientConn.RemoteAddr(), err)
+			log.Printf("[%s:%d] stopped reading from service (%v), writing to client (%v), with error (%v)\n", route.Label, link.ID, link.serviceLabel, link.clientLabel, err)
 			link.serviceError = err
 		}
 	}()

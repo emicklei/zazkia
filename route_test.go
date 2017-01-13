@@ -13,6 +13,7 @@ var routesData = `
 	        "label": "oracle",
 	        "service-hostname": "some-host-name",
 	        "service-port": 1521,
+			"service-from-file" : "/tmp/response",
 	        "listen-port": 49997,
 	        "transport": {
 				"throttle-service-response": 1,
@@ -43,6 +44,9 @@ func TestReadRoutes(t *testing.T) {
 		t.Errorf("got %v want %v", got, want)
 	}
 	for _, each := range rs {
+		if len(each.ServiceFromFile) == 0 {
+			t.Error("missing ServiceFromFile")
+		}
 		if len(each.Label) == 0 {
 			t.Error("missing Label")
 		}
