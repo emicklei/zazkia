@@ -52,7 +52,7 @@ Full zazkia-routes.json example
 |-----------|---------|--------|
 | throttle-service-response | bytes per second | positive integer |
 | delay-service-response | milliseconds delay | positive integer |
-| service-response-corrupt-method | how the bytes are mangled | firstbyte, randomize |
+| service-response-corrupt-method | how the bytes are mangled | randomize |
 | sending-to-client | whether a response from the service is sent back to the client | true, false |
 | receiving-from-client | whether a request from the client is read | true, false |
 | sending-to-service | whether a request from the client is sent to the service | true, false |
@@ -93,8 +93,9 @@ Get all links
 	
 
 Close link
+For one route, multiple connection pairs (link) could be created. Each link has an unique sequence number **id**.
 
-	POST http://localhost:9191/links/1/close
+	POST http://localhost:9191/links/{id}/close
 	
 Toggle accept connections for route
 

@@ -5,7 +5,7 @@ import (
 	"net"
 )
 
-// channel for consecutive integers to assign to new connections
+// channel for consecutive integers
 var idGen chan int
 
 func init() {

@@ -119,23 +119,6 @@ func Test_receiver(t *testing.T) {
 	}
 }
 
-func Test_corrupt_firstbyte(t *testing.T) {
-	l := new(link)
-	l.resetTransport()
-	w := new(bytes.Buffer)
-	p := parcel{[]byte{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}, 10, 0}
-
-	c := corrupter{}
-	l.transport.ServiceResponseCorruptMethod = "firstbyte"
-	np, _ := c.Write(l, w, p)
-	if got, want := len(np.data), 1; got != want {
-		t.Errorf("got %v want %v", got, want)
-	}
-	if got, want := np.written, 0; got != want {
-		t.Errorf("got %v want %v", got, want)
-	}
-}
-
 func Test_corrupt_randomize(t *testing.T) {
 	l := new(link)
 	l.resetTransport()

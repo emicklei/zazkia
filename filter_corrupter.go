@@ -17,8 +17,6 @@ func (c corrupter) Write(link *link, w io.Writer, p parcel) (parcel, error) {
 		return p, nil
 	}
 	switch m {
-	case "firstbyte":
-		return parcel{p.data[:1], 1, 0}, nil
 	case "randomize":
 		for i := 0; i < p.read; i++ {
 			j := rand.Intn(i + 1)
