@@ -36,7 +36,8 @@ Full zazkia-routes.json example
 	        "service-port": 5432,
 	        "listen-port": 49998,
 	        "transport": {
-				"throttle-service-response": 1000
+				"accept-connections": true,
+				"throttle-service-response": 1000,
 				"delay-service-response": 100,
 				"service-response-corrupt-method": "randomize",
 				"sending-to-client": true,
@@ -50,6 +51,7 @@ Full zazkia-routes.json example
 
 | transport property | comment | effective values |
 |-----------|---------|--------|
+| accept-connections | whether connections from the client are accepted | true, false |
 | throttle-service-response | bytes per second | positive integer |
 | delay-service-response | milliseconds delay | positive integer |
 | service-response-corrupt-method | how the bytes are mangled | randomize |
