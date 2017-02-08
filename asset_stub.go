@@ -1,4 +1,4 @@
-// +build droneio
+// +build travis
 
 package main
 
