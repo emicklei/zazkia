@@ -25,6 +25,7 @@ var (
 )
 
 func main() {
+	log.Println("zazkia - tpc proxy for simulating network problems")
 	flag.Parse()
 
 	// handle SIGINT (control+c)
@@ -37,7 +38,10 @@ func main() {
 
 	routes, err := readRoutes(*oConfigfile)
 	if err != nil {
-		log.Fatalf("failed to read routes:%v", err)
+		here, _ := os.Getwd()
+		log.Fatalf("failed to read routes in %s because [%v]", here, err)
+	} else {
+		log.Println("done reading routes from", *oConfigfile)
 	}
 
 	routeMgr = routeManager{routes: routes}

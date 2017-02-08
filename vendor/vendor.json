@@ -7,6 +7,30 @@
 			"path": "github.com/elazarl/go-bindata-assetfs",
 			"revision": "9a6736ed45b44bf3835afeebb3034b57ed329f3e",
 			"revisionTime": "2016-08-22T20:44:01Z"
+		},
+		{
+			"checksumSHA1": "YnG1JqjvvMJkD9IKhtX7t1FqLsQ=",
+			"path": "github.com/emicklei/go-restful",
+			"revision": "24f362968e4ac4f9f0a7f6c74ac4d66369716e16",
+			"revisionTime": "2017-01-30T12:11:36Z"
+		},
+		{
+			"checksumSHA1": "3xWz4fZ9xW+CfADpYoPFcZCYJ4E=",
+			"path": "github.com/emicklei/go-restful/log",
+			"revision": "24f362968e4ac4f9f0a7f6c74ac4d66369716e16",
+			"revisionTime": "2017-01-30T12:11:36Z"
+		},
+		{
+			"checksumSHA1": "c7jHQZk5ZEsFR9EXsWJXkszPBZA=",
+			"path": "github.com/russross/blackfriday",
+			"revision": "5f33e7b7878355cd2b7e6b8eefc48a5472c69f70",
+			"revisionTime": "2016-10-03T16:27:22Z"
+		},
+		{
+			"checksumSHA1": "kbgJvKG3NRoqU91rYnXGnyR+8HQ=",
+			"path": "github.com/shurcooL/sanitized_anchor_name",
+			"revision": "1dba4b3954bc059efc3991ec364f9f9a35f597d2",
+			"revisionTime": "2016-09-18T04:11:01Z"
 		}
 	],
 	"rootPath": "github.com/emicklei/zazkia"

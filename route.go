@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"os"
 )
 
@@ -30,7 +29,6 @@ type TransportState struct {
 }
 
 func readRoutes(location string) (routes []*Route, err error) {
-	log.Println("reading routes from", location)
 	f, err := os.Open(location)
 	if err != nil {
 		return

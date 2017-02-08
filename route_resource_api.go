@@ -9,7 +9,7 @@ import (
 var routesMatcher = regexp.MustCompile("/routes/(.+)/(.+)")
 
 func (rr routeResource) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path == "/routes" {
+	if r.URL.Path == "/routes/" {
 		rr.routes(w, r)
 		return
 	}
