@@ -3,4 +3,7 @@ language: go
 go:
   - 1.x
 
+install:
+  - go get -u github.com/jteeuwen/go-bindata/...
+
 script: go test -short -tags 'travis'
