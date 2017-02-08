@@ -53,7 +53,8 @@ func (r Route) String() string {
 }
 
 func (s TransportState) String() string {
-	return fmt.Sprintf("delay=%d,s2c=%v,rfc=%v,s2s=%v,rfs=%v,thr=%d,cor=%s,v=%v",
+	return fmt.Sprintf("accept=%v,delay=%d,s2c=%v,rfc=%v,s2s=%v,rfs=%v,thr=%d,cor=%s,v=%v",
+		s.AcceptConnections,
 		s.DelayServiceResponse, s.SendingToClient, s.ReceivingFromClient, s.SendingToService, s.ReceivingFromService,
 		s.ThrottleServiceResponse, s.ServiceResponseCorruptMethod, s.Verbose)
 }

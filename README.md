@@ -1,6 +1,7 @@
 > zazkia
 is a tool that simulates all kinds of connection problems with a tcp connection (reset,delay,throttle,corrupt).
 
+[![Build Status](https://travis-ci.org/emicklei/zazkia.png)](https://travis-ci.org/emicklei/zazkia)
 
 ### How does it work ?
 In order to apply misbehavior, zazkia must be used as a proxy between a client and service.
@@ -49,19 +50,18 @@ Full zazkia-routes.json example
 	    }
 	]
 
-| transport property | comment | effective values |
+| transport property | comment | default, effective values |
 |-----------|---------|--------|
-| accept-connections | whether connections from the client are accepted | true, false |
-| throttle-service-response | bytes per second | positive integer |
-| delay-service-response | milliseconds delay | positive integer |
-| service-response-corrupt-method | how the bytes are mangled | randomize |
-| sending-to-client | whether a response from the service is sent back to the client | true, false |
-| receiving-from-client | whether a request from the client is read | true, false |
-| sending-to-service | whether a request from the client is sent to the service | true, false |
-| receiving-from-service | whether a response from the service is read | true, false |
+| accept-connections | whether connections from the client are accepted | **true**, false |
+| throttle-service-response | bytes per second | **0**, positive integer |
+| delay-service-response | milliseconds delay | **0**, positive integer |
+| service-response-corrupt-method | how the bytes are mangled | **empty**, randomize |
+| sending-to-client | whether a response from the service is sent back to the client | **true**, false |
+| receiving-from-client | whether a request from the client is read | **true**, false |
+| sending-to-service | whether a request from the client is sent to the service | **true**, false |
+| receiving-from-service | whether a response from the service is read | **true**, false |
 
 ### Build
-[![Build Status](https://drone.io/github.com/emicklei/zazkia/status.png)](https://drone.io/github.com/emicklei/zazkia/latest)
 
 To build the project locally and test it.
 

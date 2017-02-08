@@ -79,13 +79,13 @@ func acceptConnections(route *Route, ln net.Listener) {
 	log.Printf("start tcp listening for %v", route)
 	for {
 		if !route.Transport.AcceptConnections {
-			log.Printf("not accepting new connections, retrying in 1 second")
+			log.Printf("not accepting new connections for %s, retrying in 1 second", route.Label)
 			time.Sleep(1 * time.Second)
 			continue
 		}
 		conn, err := ln.Accept()
 		if err != nil {
-			log.Printf("failed to accept new connections:%v", err)
+			log.Printf("failed to accept new connections for %s because [%v]", route.Label, err)
 			break
 		}
 		go handleConnection(route, conn)
