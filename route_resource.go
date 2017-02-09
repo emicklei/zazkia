@@ -1,21 +1,31 @@
 package main
 
 import (
-	"encoding/json"
 	"log"
 	"net/http"
+
+	restful "github.com/emicklei/go-restful"
 )
 
 type routeResource struct {
 	manager routeManager
 }
 
-func (rr routeResource) routes(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(rr.manager.routes)
+func (rr routeResource) addWebServiceTo(container *restful.Container) {
+	ws := new(restful.WebService)
+	ws.Path("/routes")
+	ws.Produces(restful.MIME_JSON)
+	ws.Route(ws.GET("/").To(rr.getRoutes))
+	ws.Route(ws.POST("/{id}/toggle-accept").To(rr.toggleAcceptConnections))
+	container.Add(ws)
 }
 
-func (rr routeResource) toggleAcceptConnections(id string, w http.ResponseWriter, r *http.Request) {
+func (rr routeResource) getRoutes(request *restful.Request, response *restful.Response) {
+	response.WriteAsJson(rr.manager.routes)
+}
+
+func (rr routeResource) toggleAcceptConnections(request *restful.Request, response *restful.Response) {
+	id := request.PathParameter("id")
 	var route *Route
 	for _, each := range rr.manager.routes {
 		if each.Label == id {
@@ -24,7 +34,7 @@ func (rr routeResource) toggleAcceptConnections(id string, w http.ResponseWriter
 		}
 	}
 	if route == nil {
-		http.NotFound(w, r)
+		http.NotFound(response, request.Request)
 		return
 	}
 	route.Transport.AcceptConnections = !route.Transport.AcceptConnections
@@ -33,5 +43,4 @@ func (rr routeResource) toggleAcceptConnections(id string, w http.ResponseWriter
 	} else {
 		log.Printf("stop tcp listening for [%s]", route.Label)
 	}
-	goHome(w, r)
 }

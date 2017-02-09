@@ -1,130 +1,178 @@
 package main
 
 import (
-	"encoding/json"
 	"errors"
-	"fmt"
-	"log"
 	"net/http"
 	"strconv"
+
+	restful "github.com/emicklei/go-restful"
 )
 
 type linkResource struct {
 	manager *linkManager
 }
 
-func (l linkResource) links(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(linkMgr.APIGroups())
+func (l linkResource) addWebServiceTo(container *restful.Container) {
+	ws := new(restful.WebService)
+	ws.Path("/links")
+	ws.Produces(restful.MIME_JSON)
+	ws.Route(ws.GET("/").To(l.getLinks))
+	ws.Route(ws.POST("/closeAllWithError").To(l.closeLinksWithError))
+	ws.Route(ws.POST("/{id}/close").To(l.close))
+	ws.Route(ws.POST("/{id}/delay-response").To(l.delayResponse))
+	ws.Route(ws.POST("/{id}/toggle-reads-client").To(l.toggleReadsClient))
+	ws.Route(ws.POST("/{id}/toggle-writes-service").To(l.toggleWritesService))
+	ws.Route(ws.POST("/{id}/toggle-reads-service").To(l.toggleReadsService))
+	ws.Route(ws.POST("/{id}/toggle-writes-client").To(l.toggleWritesClient))
+	ws.Route(ws.POST("/{id}/toggle-reads-client").To(l.toggleReadsClient))
+	ws.Route(ws.POST("/{id}/toggle-verbose").To(l.toggleVerbose))
+	ws.Route(ws.GET("/{id}/stats").To(l.stats))
+	container.Add(ws)
 }
 
-func (l linkResource) closeLinksWithError(w http.ResponseWriter, r *http.Request) {
+func (l linkResource) getLinks(request *restful.Request, response *restful.Response) {
+	response.WriteAsJson(l.manager.APIGroups())
+}
+
+func (l linkResource) closeLinksWithError(request *restful.Request, response *restful.Response) {
 	l.manager.closeAllWithError()
-	goHome(w, r)
+
 }
 
-func (l linkResource) close(id int, w http.ResponseWriter, r *http.Request) {
-	link := getLink(id, w, r)
+func (l linkResource) close(request *restful.Request, response *restful.Response) {
+	id, ok := linkIDFromRequest(request, response)
+	if !ok {
+		return
+	}
+	link := l.manager.get(id)
 	if link == nil {
+		response.WriteHeader(http.StatusNotFound)
 		return
 	}
 	if err := l.manager.disconnectAndRemove(link.ID); err != nil {
-		http.NotFound(w, r)
+		response.WriteHeader(http.StatusNotFound)
 		return
 	}
-	goHome(w, r)
+
 }
 
-func (l linkResource) delayResponse(id int, w http.ResponseWriter, r *http.Request) {
-	link := getLink(id, w, r)
+func (l linkResource) delayResponse(request *restful.Request, response *restful.Response) {
+	id, ok := linkIDFromRequest(request, response)
+	if !ok {
+		return
+	}
+	link := l.manager.get(id)
 	if link == nil {
+		response.WriteHeader(http.StatusNotFound)
 		return
 	}
 	// toggle
 	if link.transport.DelayServiceResponse > 0 {
 		link.transport.DelayServiceResponse = 0
 	} else {
-		if err := r.ParseForm(); err != nil {
-			w.WriteHeader(400)
-			fmt.Fprintf(w, err.Error())
-			return
-		}
-		ms := r.Form.Get("ms")
+		ms := request.QueryParameter("ms")
 		msi, err := strconv.Atoi(ms)
 		if msi < 0 {
 			err = errors.New("ms parameter cannot be negative")
 		}
 		if err != nil {
-			log.Println(err.Error())
-			w.WriteHeader(400)
-			fmt.Fprintf(w, err.Error())
+			response.WriteHeader(http.StatusBadRequest)
 			return
 		}
 		link.transport.DelayServiceResponse = msi
 	}
-	goHome(w, r)
+
 }
 
-func (l linkResource) toggleReadsClient(id int, w http.ResponseWriter, r *http.Request) {
-	link := getLink(id, w, r)
+func (l linkResource) toggleReadsClient(request *restful.Request, response *restful.Response) {
+	id, ok := linkIDFromRequest(request, response)
+	if !ok {
+		return
+	}
+	link := l.manager.get(id)
 	if link == nil {
+		response.WriteHeader(http.StatusNotFound)
 		return
 	}
 	link.transport.ReceivingFromClient = !link.transport.ReceivingFromClient
-	goHome(w, r)
+
 }
 
-func (l linkResource) toggleWritesService(id int, w http.ResponseWriter, r *http.Request) {
-	link := getLink(id, w, r)
+func (l linkResource) toggleWritesService(request *restful.Request, response *restful.Response) {
+	id, ok := linkIDFromRequest(request, response)
+	if !ok {
+		return
+	}
+	link := l.manager.get(id)
 	if link == nil {
+		response.WriteHeader(http.StatusNotFound)
 		return
 	}
 	link.transport.SendingToService = !link.transport.SendingToService
-	goHome(w, r)
+
 }
 
-func (l linkResource) toggleReadsService(id int, w http.ResponseWriter, r *http.Request) {
-	link := getLink(id, w, r)
+func (l linkResource) toggleReadsService(request *restful.Request, response *restful.Response) {
+	id, ok := linkIDFromRequest(request, response)
+	if !ok {
+		return
+	}
+	link := l.manager.get(id)
 	if link == nil {
+		response.WriteHeader(http.StatusNotFound)
 		return
 	}
 	link.transport.ReceivingFromService = !link.transport.ReceivingFromService
-	goHome(w, r)
+
 }
 
-func (l linkResource) toggleWritesClient(id int, w http.ResponseWriter, r *http.Request) {
-	link := getLink(id, w, r)
+func (l linkResource) toggleWritesClient(request *restful.Request, response *restful.Response) {
+	id, ok := linkIDFromRequest(request, response)
+	if !ok {
+		return
+	}
+	link := l.manager.get(id)
 	if link == nil {
+		response.WriteHeader(http.StatusNotFound)
 		return
 	}
 	link.transport.SendingToClient = !link.transport.SendingToClient
-	goHome(w, r)
+
 }
 
-func (l linkResource) toggleVerbose(id int, w http.ResponseWriter, r *http.Request) {
-	link := getLink(id, w, r)
+func (l linkResource) toggleVerbose(request *restful.Request, response *restful.Response) {
+	id, ok := linkIDFromRequest(request, response)
+	if !ok {
+		return
+	}
+	link := l.manager.get(id)
 	if link == nil {
+		response.WriteHeader(http.StatusNotFound)
 		return
 	}
 	link.transport.Verbose = !link.transport.Verbose
-	goHome(w, r)
+
 }
 
-func (l linkResource) stats(id int, w http.ResponseWriter, r *http.Request) {
-	link := getLink(id, w, r)
-	if link == nil {
+func (l linkResource) stats(request *restful.Request, response *restful.Response) {
+	id, ok := linkIDFromRequest(request, response)
+	if !ok {
 		return
 	}
-	w.Header().Set("content-type", "application/json")
-	json.NewEncoder(w).Encode(link.stats)
+	link := l.manager.get(id)
+	if link == nil {
+		response.WriteHeader(http.StatusNotFound)
+		return
+	}
+	response.WriteAsJson(link.stats)
 }
 
-func getLink(id int, w http.ResponseWriter, r *http.Request) *link {
-	link := linkMgr.get(id)
-	if link == nil {
-		log.Println("no link with id", id)
-		http.NotFound(w, r)
-		return nil
+func linkIDFromRequest(request *restful.Request, response *restful.Response) (int, bool) {
+	ids := request.PathParameter("id")
+	id, err := strconv.Atoi(ids)
+	if err != nil {
+		response.WriteHeader(http.StatusBadRequest)
+		return 0, false
 	}
-	return link
+	return id, true
 }

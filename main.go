@@ -6,13 +6,12 @@ import (
 	"flag"
 	"fmt"
 	"log"
-	"net"
 	"net/http"
 	"os"
 	"os/signal"
-	"time"
 
 	"github.com/elazarl/go-bindata-assetfs"
+	restful "github.com/emicklei/go-restful"
 )
 
 var (
@@ -36,6 +35,7 @@ func main() {
 		cleanAndExit(0)
 	}()
 
+	// reading config
 	routes, err := readRoutes(*oConfigfile)
 	if err != nil {
 		here, _ := os.Getwd()
@@ -47,26 +47,27 @@ func main() {
 	routeMgr = routeManager{routes: routes}
 
 	// for each route start a listener
-	for _, each := range routes {
-		ln, err := net.Listen("tcp", fmt.Sprintf(":%d", each.ListenPort))
-		if err != nil {
-			log.Fatalf("failed to start listener:%v", err)
-		}
-		go acceptConnections(each, ln)
-
-	}
+	startListeners(routes)
 
 	log.Printf("start http listening on :%d\n", *oAdminPort)
 
-	http.HandleFunc("/index.html", dashboardResourceIndex)
+	// static file serving
 	dashboard := &assetfs.AssetFS{Asset: Asset, AssetDir: AssetDir, AssetInfo: AssetInfo, Prefix: "dashboard"}
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(dashboard)))
-	http.Handle("/routes/", routeResource{routeMgr})
-	// TODO extract the home redirect
-	http.Handle("/", linkResource{linkMgr})
+
+	addRESTResources()
+	addSwagger()
 
 	log.Println(http.ListenAndServe(fmt.Sprintf(":%d", *oAdminPort), nil))
 	cleanAndExit(1)
+}
+
+func addRESTResources() {
+	restful.DefaultRequestContentType(restful.MIME_JSON)
+	restful.DefaultResponseContentType(restful.MIME_JSON)
+	routeResource{routeMgr}.addWebServiceTo(restful.DefaultContainer)
+	dashboardResource{}.addWebServiceTo(restful.DefaultContainer)
+	linkResource{linkMgr}.addWebServiceTo(restful.DefaultContainer)
 }
 
 func cleanAndExit(code int) {
@@ -75,47 +76,6 @@ func cleanAndExit(code int) {
 	os.Exit(code)
 }
 
-func acceptConnections(route *Route, ln net.Listener) {
-	log.Printf("start tcp listening for %v", route)
-	for {
-		if !route.Transport.AcceptConnections {
-			log.Printf("not accepting new connections for %s, retrying in 1 second", route.Label)
-			time.Sleep(1 * time.Second)
-			continue
-		}
-		conn, err := ln.Accept()
-		if err != nil {
-			log.Printf("failed to accept new connections for %s because [%v]", route.Label, err)
-			break
-		}
-		go handleConnection(route, conn)
-	}
-}
+func addSwagger() {
 
-func handleConnection(route *Route, clientConn net.Conn) {
-	addr := clientConn.RemoteAddr().String()
-	serviceConn, err := net.Dial("tcp", route.tcp())
-	if err != nil {
-		log.Printf("[%s] failed to connect to remote:%v", route.Label, err)
-		return
-	}
-
-	link := newLink(route, clientConn, serviceConn)
-	linkMgr.add(link)
-
-	log.Printf("[%s:%d] start handling client(%v) <=> service(%v)\n", route.Label, link.ID, addr, serviceConn.RemoteAddr())
-	// service <- client
-	go func() {
-		if err := transport(link, serviceConn, clientConn, !AccessesService); err != nil {
-			log.Printf("[%s:%d] stopped writing to service (%v), reading from client(%v), with error (%v)\n", route.Label, link.ID, serviceConn.RemoteAddr(), clientConn.RemoteAddr(), err)
-			link.clientError = err
-		}
-	}()
-	// client <- service
-	go func() {
-		if err := transport(link, clientConn, serviceConn, AccessesService); err != nil {
-			log.Printf("[%s:%d] stopped reading from service (%v), writing to client (%v), with error (%v)\n", route.Label, link.ID, serviceConn.RemoteAddr(), clientConn.RemoteAddr(), err)
-			link.serviceError = err
-		}
-	}()
 }
