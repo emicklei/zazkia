@@ -17,10 +17,16 @@ func (rr routeResource) addWebServiceTo(container *restful.Container) {
 	ws.Produces(restful.MIME_JSON)
 	ws.Route(ws.GET("/").To(rr.getRoutes))
 	ws.Route(ws.POST("/{id}/toggle-accept").To(rr.toggleAcceptConnections))
+	ws.Route(ws.GET("/{id}/links").To(rr.getLinksForRoute))
 	container.Add(ws)
 }
 
 func (rr routeResource) getRoutes(request *restful.Request, response *restful.Response) {
+	id := request.PathParameter("id")
+	response.WriteAsJson(linkMgr.APILinks(id)) // TODO should not use global
+}
+
+func (rr routeResource) getLinksForRoute(request *restful.Request, response *restful.Response) {
 	response.WriteAsJson(rr.manager.routes)
 }
 

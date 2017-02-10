@@ -7,6 +7,8 @@ is a tool that simulates all kinds of connection problems with a tcp connection 
 In order to apply misbehavior, zazkia must be used as a proxy between a client and service.
 It will accept tcp connections from a client and for each new one, will create a connection to the target service.
 
+![](dashboard/img/zazkia-as-proxy.png)
+
 ### Routes
 By specifying routes, you can tell zazkia on what ports to listen and what target to connect to (host and port).
 

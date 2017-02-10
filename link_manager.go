@@ -94,6 +94,18 @@ func (m *linkManager) APIGroups() []*APILinkGroup {
 	return all
 }
 
+func (m *linkManager) APILinks(routeLabel string) (all []APILink) {
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+	for _, each := range m.links {
+		if each.route.Label == routeLabel {
+			all = append(all, NewAPILink(each))
+		}
+	}
+	sort.Sort(APILinkSorter(all))
+	return
+}
+
 type APILinkGroupSorter []*APILinkGroup
 
 func (s APILinkGroupSorter) Len() int {
