@@ -27,10 +27,28 @@
 			"revisionTime": "2017-01-30T12:11:36Z"
 		},
 		{
+			"checksumSHA1": "6dTGC5A1Y1xnv+JSi9z8S6JfnH0=",
+			"path": "github.com/go-openapi/jsonpointer",
+			"revision": "779f45308c19820f1a69e9a4cd965f496e0da10f",
+			"revisionTime": "2017-01-02T17:42:23Z"
+		},
+		{
+			"checksumSHA1": "YMNc0I/ifBw9TsnF13NTpIN9yu4=",
+			"path": "github.com/go-openapi/jsonreference",
+			"revision": "36d33bfe519efae5632669801b180bf1a245da3b",
+			"revisionTime": "2016-11-05T16:21:50Z"
+		},
+		{
 			"checksumSHA1": "gzEsgIN6UZgjP6g0K1QWSYDnvqg=",
 			"path": "github.com/go-openapi/spec",
 			"revision": "f81e0f768713035fe232cd0d44a1c56e4eef1383",
 			"revisionTime": "2017-01-27T17:27:12Z"
+		},
+		{
+			"checksumSHA1": "AmuDvoqYpodvT8mzy+IEnKg9HFg=",
+			"path": "github.com/go-openapi/swag",
+			"revision": "d5f8ebc3b1c55a4cf6489eeae7354f338cfe299e",
+			"revisionTime": "2017-01-29T22:26:39Z"
 		},
 		{
 			"checksumSHA1": "c7jHQZk5ZEsFR9EXsWJXkszPBZA=",
