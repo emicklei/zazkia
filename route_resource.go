@@ -17,7 +17,7 @@ func (rr routeResource) addWebServiceTo(container *restful.Container) {
 	ws.Produces(restful.MIME_JSON)
 	ws.Route(ws.GET("/").To(rr.getRoutes))
 	ws.Route(ws.POST("/{id}/toggle-accept").To(rr.toggleAcceptConnections))
-	ws.Route(ws.GET("/{id}/links").To(rr.getLinksForRoute))
+	ws.Route(ws.GET("/{id}/links").To(rr.getLinksForRoute).Metadata("swagger.tags", "routes,links"))
 	container.Add(ws)
 }
 

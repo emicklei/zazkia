@@ -1,6 +1,6 @@
 package main
 
-//go:generate go-bindata -pkg main dashboard/...
+//go:generate go-bindata -pkg main dashboard/... swagger-ui/...
 
 import (
 	"flag"
@@ -9,9 +9,12 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strconv"
 
 	"github.com/elazarl/go-bindata-assetfs"
 	restful "github.com/emicklei/go-restful"
+	restfulspec "github.com/emicklei/go-restful-openapi"
+	"github.com/go-openapi/spec"
 )
 
 var (
@@ -77,5 +80,36 @@ func cleanAndExit(code int) {
 }
 
 func addSwagger() {
+	config := restfulspec.Config{
+		WebServices:    restful.RegisteredWebServices(),
+		WebServicesURL: "http://localhost:" + strconv.Itoa(*oAdminPort),
+		APIPath:        "/apidocs.json",
+		PostBuildSwaggerObjectHandler: extendSwaggerObject}
+	restfulspec.RegisterOpenAPIService(config, restful.DefaultContainer)
 
+	// static file serving
+	swaggerUI := &assetfs.AssetFS{Asset: Asset, AssetDir: AssetDir, AssetInfo: AssetInfo, Prefix: "swagger-ui/dist"}
+	http.Handle("/swagger-ui/", http.StripPrefix("/swagger-ui/", http.FileServer(swaggerUI)))
+}
+
+func extendSwaggerObject(s *spec.Swagger) {
+	s.Info = &spec.Info{
+		InfoProps: spec.InfoProps{
+			Title:       "Zazkia REST API",
+			Description: "Resources for managing Routes and Links",
+			Contact: &spec.ContactInfo{
+				Name:  "Ernest Micklei",
+				Email: "zazkia@philemonworks.com",
+				URL:   "https://github.com/emicklei/zazkia",
+			},
+			License: &spec.License{
+				Name: "MIT License",
+				URL:  "https://opensource.org/licenses/MIT",
+			},
+			Version: "1.0.0",
+		},
+	}
+	s.Tags = []spec.Tag{spec.Tag{TagProps: spec.TagProps{
+		Name:        "links",
+		Description: "Managing links"}}}
 }

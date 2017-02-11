@@ -9,16 +9,28 @@
 			"revisionTime": "2016-08-22T20:44:01Z"
 		},
 		{
-			"checksumSHA1": "YnG1JqjvvMJkD9IKhtX7t1FqLsQ=",
+			"checksumSHA1": "JTNuX0hBzi+Zdet41T36K/r129M=",
 			"path": "github.com/emicklei/go-restful",
-			"revision": "24f362968e4ac4f9f0a7f6c74ac4d66369716e16",
-			"revisionTime": "2017-01-30T12:11:36Z"
+			"revision": "371e2e97d294f258c59be5b2522958ce20ff461a",
+			"revisionTime": "2017-02-11T12:39:45Z"
+		},
+		{
+			"checksumSHA1": "MHcaauKIEeukT2qtKlpDgkH+jtI=",
+			"path": "github.com/emicklei/go-restful-openapi",
+			"revision": "09b2c8b731372f31d8d0c4c5a1bbaffb1ced3044",
+			"revisionTime": "2017-02-11T19:51:13Z"
 		},
 		{
 			"checksumSHA1": "3xWz4fZ9xW+CfADpYoPFcZCYJ4E=",
 			"path": "github.com/emicklei/go-restful/log",
 			"revision": "24f362968e4ac4f9f0a7f6c74ac4d66369716e16",
 			"revisionTime": "2017-01-30T12:11:36Z"
+		},
+		{
+			"checksumSHA1": "gzEsgIN6UZgjP6g0K1QWSYDnvqg=",
+			"path": "github.com/go-openapi/spec",
+			"revision": "f81e0f768713035fe232cd0d44a1c56e4eef1383",
+			"revisionTime": "2017-01-27T17:27:12Z"
 		},
 		{
 			"checksumSHA1": "c7jHQZk5ZEsFR9EXsWJXkszPBZA=",
