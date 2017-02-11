@@ -9,6 +9,12 @@
 			"revisionTime": "2016-11-15T02:49:42Z"
 		},
 		{
+			"checksumSHA1": "pvmScnaMFuAVLTxxOWjhGZBgPkg=",
+			"path": "github.com/PuerkitoBio/urlesc",
+			"revision": "5bd2802263f21d8788851d5305584c82a5c75d7e",
+			"revisionTime": "2016-07-26T15:08:25Z"
+		},
+		{
 			"checksumSHA1": "bGdOim32+2dyKoQEtwW1PNwcdBc=",
 			"path": "github.com/elazarl/go-bindata-assetfs",
 			"revision": "9a6736ed45b44bf3835afeebb3034b57ed329f3e",
@@ -57,6 +63,12 @@
 			"revisionTime": "2017-01-29T22:26:39Z"
 		},
 		{
+			"checksumSHA1": "urY45++NYCue4nh4k8OjUFnIGfU=",
+			"path": "github.com/mailru/easyjson/buffer",
+			"revision": "99e922cf9de1bc0ab38310c277cff32c2147e747",
+			"revisionTime": "2017-01-31T14:07:56Z"
+		},
+		{
 			"checksumSHA1": "QhVQGPRi0D9Ha7oJAsA1gAHfRmI=",
 			"path": "github.com/mailru/easyjson/jlexer",
 			"revision": "99e922cf9de1bc0ab38310c277cff32c2147e747",
@@ -79,6 +91,30 @@
 			"path": "github.com/shurcooL/sanitized_anchor_name",
 			"revision": "1dba4b3954bc059efc3991ec364f9f9a35f597d2",
 			"revisionTime": "2016-09-18T04:11:01Z"
+		},
+		{
+			"checksumSHA1": "GIGmSrYACByf5JDIP9ByBZksY80=",
+			"path": "golang.org/x/net/idna",
+			"revision": "f2499483f923065a842d38eb4c7f1927e6fc6e6d",
+			"revisionTime": "2017-01-14T04:22:49Z"
+		},
+		{
+			"checksumSHA1": "ziMb9+ANGRJSSIuxYdRbA+cDRBQ=",
+			"path": "golang.org/x/text/transform",
+			"revision": "11dbc599981ccdf4fb18802a28392a8bcf7a9395",
+			"revisionTime": "2017-01-12T23:38:57Z"
+		},
+		{
+			"checksumSHA1": "Vircurgvsnt4k26havmxPM67PUA=",
+			"path": "golang.org/x/text/unicode/norm",
+			"revision": "11dbc599981ccdf4fb18802a28392a8bcf7a9395",
+			"revisionTime": "2017-01-12T23:38:57Z"
+		},
+		{
+			"checksumSHA1": "DVLYAo9qL2EilduyXwBKMqL44U4=",
+			"path": "golang.org/x/text/width",
+			"revision": "11dbc599981ccdf4fb18802a28392a8bcf7a9395",
+			"revisionTime": "2017-01-12T23:38:57Z"
 		}
 	],
 	"rootPath": "github.com/emicklei/zazkia"
