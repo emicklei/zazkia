@@ -51,10 +51,10 @@
 			"revisionTime": "2016-11-05T16:21:50Z"
 		},
 		{
-			"checksumSHA1": "gzEsgIN6UZgjP6g0K1QWSYDnvqg=",
+			"checksumSHA1": "m4Hv3utLm095Tmjo0XfLQxTtzcc=",
 			"path": "github.com/go-openapi/spec",
-			"revision": "f81e0f768713035fe232cd0d44a1c56e4eef1383",
-			"revisionTime": "2017-01-27T17:27:12Z"
+			"revision": "02fb9cd3430ed0581e0ceb4804d5d4b3cc702694",
+			"revisionTime": "2017-02-03T15:16:51Z"
 		},
 		{
 			"checksumSHA1": "AmuDvoqYpodvT8mzy+IEnKg9HFg=",
