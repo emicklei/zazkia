@@ -3,6 +3,12 @@
 	"ignore": "test",
 	"package": [
 		{
+			"checksumSHA1": "NX4v3cbkXAJxFlrncqT9yEUBuoA=",
+			"path": "github.com/PuerkitoBio/purell",
+			"revision": "0bcb03f4b4d0a9428594752bd2a3b9aa0a9d4bd4",
+			"revisionTime": "2016-11-15T02:49:42Z"
+		},
+		{
 			"checksumSHA1": "bGdOim32+2dyKoQEtwW1PNwcdBc=",
 			"path": "github.com/elazarl/go-bindata-assetfs",
 			"revision": "9a6736ed45b44bf3835afeebb3034b57ed329f3e",
@@ -49,6 +55,18 @@
 			"path": "github.com/go-openapi/swag",
 			"revision": "d5f8ebc3b1c55a4cf6489eeae7354f338cfe299e",
 			"revisionTime": "2017-01-29T22:26:39Z"
+		},
+		{
+			"checksumSHA1": "QhVQGPRi0D9Ha7oJAsA1gAHfRmI=",
+			"path": "github.com/mailru/easyjson/jlexer",
+			"revision": "99e922cf9de1bc0ab38310c277cff32c2147e747",
+			"revisionTime": "2017-01-31T14:07:56Z"
+		},
+		{
+			"checksumSHA1": "Y87W4rlZJ+Dlsyax7u5SUy1RqF8=",
+			"path": "github.com/mailru/easyjson/jwriter",
+			"revision": "99e922cf9de1bc0ab38310c277cff32c2147e747",
+			"revisionTime": "2017-01-31T14:07:56Z"
 		},
 		{
 			"checksumSHA1": "c7jHQZk5ZEsFR9EXsWJXkszPBZA=",
