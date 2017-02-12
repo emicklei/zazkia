@@ -109,7 +109,9 @@ func extendSwaggerObject(s *spec.Swagger) {
 			Version: "1.0.0",
 		},
 	}
-	s.Tags = []spec.Tag{spec.Tag{TagProps: spec.TagProps{
+	s.Tags = []spec.Tag{{TagProps: spec.TagProps{
 		Name:        "links",
-		Description: "Managing links"}}}
+		Description: "Managing links"}}, {TagProps: spec.TagProps{
+		Name:        "routes",
+		Description: "Managing routes"}}}
 }
