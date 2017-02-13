@@ -26,7 +26,8 @@ Your application (the client) will setup a tcp connection with zazkia which will
 
 #### Initial transport behavior
 The transport part of a route configuration can be used to setup the initial behavior of a new connection pair (called link).
-Using a REST api, the transport behavior can be changed on a per-link basis.
+If not specified then use the default transport (see below).
+Using a REST api, the transport behavior can be changed on a per-link basis (see Swagger tab in the dashboard).
 
 Full **zazkia-routes.json** example
 
@@ -50,13 +51,28 @@ Full **zazkia-routes.json** example
 	    }
 	]
 
-| transport property | comment | default, effective values |
+| transport property | comment | effective values |
 |-----------|---------|--------|
-| accept-connections | whether connections from the client are accepted | **true**, false |
-| throttle-service-response | bytes per second | **0**, positive integer |
-| delay-service-response | milliseconds delay | **0**, positive integer |
+| accept-connections | whether connections from the client are accepted | true, false |
+| throttle-service-response | bytes per second | non-negative integer |
+| delay-service-response | milliseconds delay | non-negative integer |
 | service-response-corrupt-method | how the bytes are mangled | **empty**, randomize |
-| sending-to-client | whether a response from the service is sent back to the client | **true**, false |
-| receiving-from-client | whether a request from the client is read | **true**, false |
-| sending-to-service | whether a request from the client is sent to the service | **true**, false |
-| receiving-from-service | whether a response from the service is read | **true**, false |
+| sending-to-client | whether a response from the service is sent back to the client | true, false |
+| receiving-from-client | whether a request from the client is read | true, false |
+| sending-to-service | whether a request from the client is sent to the service | true, false|
+| receiving-from-service | whether a response from the service is read | true, false | 
+| verbose | log each message that is transported between client and service | true, false |
+
+### Default transport behavior 
+
+	"transport": {
+		"accept-connections": true,
+		"throttle-service-response": 0,
+		"delay-service-response": 0,
+		"service-response-corrupt-method": "",
+		"sending-to-client": true,
+		"receiving-from-client": true,
+		"sending-to-service": true,
+		"receiving-from-service": true,
+		"verbose": false
+	}

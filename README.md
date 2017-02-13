@@ -52,16 +52,31 @@ Full zazkia-routes.json example
 	    }
 	]
 
-| transport property | comment | default, effective values |
+| transport property | comment | effective values |
 |-----------|---------|--------|
-| accept-connections | whether connections from the client are accepted | **true**, false |
-| throttle-service-response | bytes per second | **0**, positive integer |
-| delay-service-response | milliseconds delay | **0**, positive integer |
+| accept-connections | whether connections from the client are accepted | true, false |
+| throttle-service-response | bytes per second | non-negative integer |
+| delay-service-response | milliseconds delay | non-negative integer |
 | service-response-corrupt-method | how the bytes are mangled | **empty**, randomize |
-| sending-to-client | whether a response from the service is sent back to the client | **true**, false |
-| receiving-from-client | whether a request from the client is read | **true**, false |
-| sending-to-service | whether a request from the client is sent to the service | **true**, false |
-| receiving-from-service | whether a response from the service is read | **true**, false |
+| sending-to-client | whether a response from the service is sent back to the client | true, false |
+| receiving-from-client | whether a request from the client is read | true, false |
+| sending-to-service | whether a request from the client is sent to the service | true, false|
+| receiving-from-service | whether a response from the service is read | true, false | 
+| verbose | log each message that is transported between client and service | true, false |
+
+### Default transport behavior 
+
+	"transport": {
+		"accept-connections": true,
+		"throttle-service-response": 0,
+		"delay-service-response": 0,
+		"service-response-corrupt-method": "",
+		"sending-to-client": true,
+		"receiving-from-client": true,
+		"sending-to-service": true,
+		"receiving-from-service": true,
+		"verbose": false
+	}
 
 ### Build
 
@@ -80,51 +95,6 @@ Defaults (-p 9191 -f zazkia-routes.json)
 	./zazkia
 
 ### Dashboard
-A simple HTML dashboard is available to change the transport behavior of individual links.
+A simple HTML dashboard is available to change the transport behavior of individual links. See the Swagger tab for documentation of the REST API.
 
 	http://localhost:9191
-	
-	
-### REST API
-
-Get all routes
-
-	GET http://localhost:9191/routes
-
-Get all links
-
-	GET http://localhost:9191/links
-	
-
-Close link
-For one route, multiple connection pairs (link) could be created. Each link has an unique sequence number **id**.
-
-	POST http://localhost:9191/links/{id}/close
-	
-Toggle accept connections for route
-
-	POST http://localhost:9191/routes/{label}/toggle-accept
-		
-
-Delay transport of response data from service to client (parameter "ms" in milliseconds)
-
-	POST http://localhost:9191/links/1/delay-response?ms=1000
-
-	
-Toggle enable receive or sent via link (both from client and service)	
-
-	POST http://localhost:9191/links/1/toggle-reads-client
-	POST http://localhost:9191/links/1/toggle-writes-service
-	POST http://localhost:9191/links/1/toggle-reads-service
-	POST http://localhost:9191/links/1/toggle-writes-client	
-
-
-Toggle verbose logging of data transport via link
-
-	POST http://localhost:9191/links/1/toggle-verbose
-
-		
-Get transport statistics of a link
-
-	GET http://localhost:9191/links/1/stats
-	

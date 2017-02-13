@@ -1,0 +1,8 @@
+[
+    {
+        "label": "zazkia-systemtest",
+        "service-hostname": "localhost",
+        "service-port": 12345,
+        "listen-port": 54321
+    }
+]
