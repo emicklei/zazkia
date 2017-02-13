@@ -16,17 +16,40 @@ func (l linkResource) addWebServiceTo(container *restful.Container) {
 	ws := new(restful.WebService)
 	ws.Path("/links")
 	ws.Produces(restful.MIME_JSON)
-	RouteWithTags(ws, ws.GET("/").To(l.getLinks))
-	RouteWithTags(ws, ws.POST("/closeAllWithError").To(l.closeLinksWithError))
-	RouteWithTags(ws, ws.POST("/{id}/close").To(l.close))
-	RouteWithTags(ws, ws.POST("/{id}/delay-response").To(l.delayResponse))
-	RouteWithTags(ws, ws.POST("/{id}/toggle-reads-client").To(l.toggleReadsClient))
-	RouteWithTags(ws, ws.POST("/{id}/toggle-writes-service").To(l.toggleWritesService))
-	RouteWithTags(ws, ws.POST("/{id}/toggle-reads-service").To(l.toggleReadsService))
-	RouteWithTags(ws, ws.POST("/{id}/toggle-writes-client").To(l.toggleWritesClient))
-	RouteWithTags(ws, ws.POST("/{id}/toggle-reads-client").To(l.toggleReadsClient))
-	RouteWithTags(ws, ws.POST("/{id}/toggle-verbose").To(l.toggleVerbose))
-	RouteWithTags(ws, ws.GET("/{id}/stats").To(l.stats))
+	idParam := ws.PathParameter("id", "identifier of the link (is unique for all routes).")
+
+	RouteWithTags(ws, ws.GET("/").To(l.getLinks).
+		Doc("Returns all links for all routes."))
+	RouteWithTags(ws, ws.POST("/closeAllWithError").To(l.closeLinksWithError).
+		Doc("Cleanup all links for which an error was detected."))
+	RouteWithTags(ws, ws.POST("/{id}/close").To(l.close).
+		Doc("Close the client connections for this link. The server connection will be closed too.").
+		Param(idParam))
+	RouteWithTags(ws, ws.POST("/{id}/delay-response").To(l.delayResponse).
+		Doc("Delay sending the response to the client").
+		Param(ws.QueryParameter("ms", "milliseconds to delay transport to the client.").DataType("integer")).
+		Param(idParam))
+	RouteWithTags(ws, ws.POST("/{id}/toggle-reads-client").To(l.toggleReadsClient).
+		Doc("Change whether reading data from the client is enabled.").
+		Param(idParam))
+	RouteWithTags(ws, ws.POST("/{id}/toggle-writes-service").To(l.toggleWritesService).
+		Doc("Change whether writing data to the service is enabled.").
+		Param(idParam))
+	RouteWithTags(ws, ws.POST("/{id}/toggle-reads-service").To(l.toggleReadsService).
+		Doc("Change whether reading data from the service is enabled.").
+		Param(idParam))
+	RouteWithTags(ws, ws.POST("/{id}/toggle-writes-client").To(l.toggleWritesClient).
+		Doc("Change whether writing data to the client is enabled.").
+		Param(idParam))
+	RouteWithTags(ws, ws.POST("/{id}/toggle-reads-client").To(l.toggleReadsClient).
+		Doc("Change whether reading data from the client is enabled.").
+		Param(idParam))
+	RouteWithTags(ws, ws.POST("/{id}/toggle-verbose").To(l.toggleVerbose).
+		Doc("Change whether transport of data (to and from the service) is logged.").
+		Param(idParam))
+	RouteWithTags(ws, ws.GET("/{id}/stats").To(l.stats).
+		Doc("Statistics with data transported to and from services and clients.").
+		Param(idParam))
 	container.Add(ws)
 }
 

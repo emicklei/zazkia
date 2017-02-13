@@ -51,9 +51,12 @@ func newLink(r *Route, connectionToClient net.Conn, connectionToService net.Conn
 		route:       r,
 		clientConn:  connectionToClient,
 		serviceConn: connectionToService,
-		stats:       TransportStats{},
 	}
-	l.resetTransport()
+	if r.Transport == nil {
+		l.resetTransport()
+	} else {
+		l.transport = *r.Transport
+	}
 	return l
 }
 
