@@ -1,10 +1,13 @@
 package restfulspec
 
 import (
+	"strings"
+
 	restful "github.com/emicklei/go-restful"
 	"github.com/go-openapi/spec"
 )
 
+// KeyOpenAPITags is a Metadata key for a restful Route
 const KeyOpenAPITags = "openapi.tags"
 
 func buildPaths(ws *restful.WebService) spec.Paths {
@@ -43,6 +46,10 @@ func buildPathItem(ws *restful.WebService, r restful.Route) spec.PathItem {
 func buildOperation(ws *restful.WebService, r restful.Route) *spec.Operation {
 	o := spec.NewOperation(r.Operation)
 	o.Description = r.Doc
+	// take the first line to be the summary
+	if lines := strings.Split(r.Doc, "\n"); len(lines) > 0 {
+		o.Summary = lines[0]
+	}
 	o.Consumes = r.Consumes
 	o.Produces = r.Produces
 	if r.Metadata != nil {
