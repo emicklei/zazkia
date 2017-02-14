@@ -98,3 +98,6 @@ Defaults (-p 9191 -f zazkia-routes.json)
 A simple HTML dashboard is available to change the transport behavior of individual links. See the Swagger tab for documentation of the REST API.
 
 	http://localhost:9191
+
+
+© 2017, [ernestmicklei.com](http://ernestmicklei.com).  Apache v2 License. Contributions welcome.	

@@ -1,3 +1,19 @@
+/*
+Copyright 2017 Ernest Micklei
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
 package main
 
 import (
@@ -107,19 +123,19 @@ func (l *link) disconnect() error {
 }
 
 type APILink struct {
-	ID           int            `json:"id"`
-	State        TransportState `json:"state"`
-	Stats        TransportStats `json:"stats"`
-	ClientError  string         `json:"clientError,omitempty"`
-	ServiceError string         `json:"serviceError,omitempty"`
+	ID                  int            `json:"id"`
+	State               TransportState `json:"state"`
+	Stats               TransportStats `json:"stats"`
+	ClientReceiveError  string         `json:"clientReceiveError,omitempty"`
+	ServiceReceiveError string         `json:"serviceReceiveError,omitempty"`
 }
 
 func NewAPILink(l *link) APILink {
 	return APILink{
-		ID:           l.ID,
-		State:        l.transport,
-		Stats:        l.stats,
-		ClientError:  l.clientErrorString(),
-		ServiceError: l.serviceErrorString(),
+		ID:                  l.ID,
+		State:               l.transport,
+		Stats:               l.stats,
+		ClientReceiveError:  l.clientErrorString(),
+		ServiceReceiveError: l.serviceErrorString(),
 	}
 }
