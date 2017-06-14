@@ -100,4 +100,31 @@ A simple HTML dashboard is available to change the transport behavior of individ
 	http://localhost:9191
 
 
+## Docker
+A Docker image is available on Docker Hub.
+
+### Usage
+
+	docker run -d -p 9200-9300:9200-9300 -p 9191:9191 -v $(pwd):/data emicklei/zazkia
+
+Zazkia will look for a file called **zazkia-routes.json**.
+The web UI will be running on http://localhost:9191
+When using Docker, routes must use listener ports in the range 9200-9300.
+
+## zazkia-routes.json example
+
+	[
+		{
+			"label": "oracle",
+	        "service-hostname": "some.host.name",
+	        "service-port": 1521,
+	        "listen-port": 9200 
+		}
+	]
+
+### Build your own image
+
+	GOOS=linux go build && docker build -t zazkia .
+
+
 © 2017, [ernestmicklei.com](http://ernestmicklei.com).  Apache v2 License. Contributions welcome.	
