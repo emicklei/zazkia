@@ -17,6 +17,7 @@ limitations under the License.
 package main
 
 import (
+	"log"
 	"text/template"
 
 	restful "github.com/emicklei/go-restful"
@@ -52,7 +53,9 @@ func (d dashboardResource) addWebServiceTo(container *restful.Container) {
 
 func (d dashboardResource) getIndex(request *restful.Request, response *restful.Response) {
 	response.Header().Set("Content-Type", "text/html")
-	indexPage.Execute(response, linkMgr.APIGroups())
+	if err := indexPage.Execute(response, linkMgr.APIGroups()); err != nil {
+		log.Println("index rendering failed", err)
+	}
 }
 
 func (d dashboardResource) getHelp(request *restful.Request, response *restful.Response) {
@@ -62,5 +65,7 @@ func (d dashboardResource) getHelp(request *restful.Request, response *restful.R
 		response.WriteHeaderAndEntity(404, "could not load/find help.md")
 		return
 	}
-	helpPage.Execute(response, string(blackfriday.MarkdownCommon(input)))
+	if err := helpPage.Execute(response, string(blackfriday.MarkdownCommon(input))); err != nil {
+		log.Println("help rendering failed", err)
+	}
 }

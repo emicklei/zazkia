@@ -77,7 +77,7 @@
                             <a class="btn btn-default {{if .State.Verbose}} btn-info {{end}} " href="javascript:doLinkAction({{ .ID }},'toggle-verbose'); ">trace</a>
 
                             <div class="errors ">
-                                {{if gt (len .ClientError) 0}} client receive error:{{ .ClientError }} {{end}} {{if gt (len .ServiceError) 0}} service receive error:{{ .ServiceError }} {{end}}
+                                {{if gt (len .ClientReceiveError) 0}} client receive error:{{ .ClientReceiveError }} {{end}} {{if gt (len .ServiceReceiveError) 0}} service receive error:{{ .ServiceReceiveError }} {{end}}
                             </div>
 
                             <div class="stats ">
