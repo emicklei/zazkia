@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+   db:
+     image: mysql:5.7
+     volumes:
+       - db_data:/var/lib/mysql
+     restart: always
+     environment:
+       MYSQL_ROOT_PASSWORD: somewordpress
+       MYSQL_DATABASE: wordpress
+       MYSQL_USER: wordpress
+       MYSQL_PASSWORD: wordpress
+
+   zazkia:
+     depends_on:
+       - db
+     image: emicklei/zazkia
+     ports:
+       - "9191:9191"       
+     volumes:
+       - .:/data
+   
+   wordpress:
+     depends_on:
+       - zazkia
+     image: wordpress:latest
+     ports:
+       - "8181:80"
+     restart: always
+     environment:
+       WORDPRESS_DB_HOST: zazkia:9200
+       WORDPRESS_DB_USER: wordpress
+       WORDPRESS_DB_PASSWORD: wordpress
+volumes:
+    db_data:

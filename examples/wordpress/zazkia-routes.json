@@ -1,0 +1,18 @@
+[{
+    "label": "mysql",
+    "service-hostname": "db",
+    "service-port": 3306,
+    "listen-port": 9200,
+
+    "transport": {
+        "accept-connections": true,
+        "throttle-service-response": 0,
+        "delay-service-response": 0,
+        "service-response-corrupt-method": "",
+        "sending-to-client": true,
+        "receiving-from-client": true,
+        "sending-to-service": true,
+        "receiving-from-service": true,
+        "verbose": true
+    }
+}]

@@ -38,7 +38,7 @@ func (l logger) Read(link *link, r io.Reader, p parcel) (parcel, error) {
 		log.Printf("[%s.%d] read %d bytes from %s", link.route.Label, link.ID, p.read, src)
 		if !l.accessService {
 			// only log what is read from the client
-			log.Println(printable(p.data[:p.read]))
+			log.Printf("[%s.%d << client] %s\n", link.route.Label, link.ID, printable(p.data[:p.read]))
 		}
 	}
 	return p, nil
@@ -53,10 +53,10 @@ func (l logger) Write(link *link, w io.Writer, p parcel) (parcel, error) {
 		if l.accessService {
 			target = "service"
 		}
-		log.Printf("[%s.%d] written %d bytes to %s", link.route.Label, link.ID, p.written, target)
+		log.Printf("[%s.%d] written %d bytes to %s\n", link.route.Label, link.ID, p.written, target)
 		if !l.accessService {
 			// only log what is written to the client
-			log.Println(printable(p.data[:p.written]))
+			log.Printf("[%s.%d >> client] %s\n", link.route.Label, link.ID, printable(p.data[:p.written]))
 		}
 	}
 	return p, nil
