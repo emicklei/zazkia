@@ -84,6 +84,8 @@ To build the project locally and test it.
 
 	go get -u github.com/jteeuwen/go-bindata/...
 
+Make sure $GOPATH/bin is on your $PATH.
+
 	go generate
 	go test
 	go build
