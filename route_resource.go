@@ -34,8 +34,7 @@ func (rr routeResource) addWebServiceTo(container *restful.Container) {
 	labelParam := ws.PathParameter("label", "identifier of the route.")
 
 	RouteWithTags(ws, ws.GET("/").To(rr.getRoutes).
-		Doc("All routes as defined in the configuration.").
-		Param(labelParam))
+		Doc("All routes as defined in the configuration."))
 	RouteWithTags(ws, ws.POST("/{label}/toggle-accept").To(rr.toggleAcceptConnections).
 		Doc("Change whether new connections can be accepted for this route.").
 		Param(labelParam))
