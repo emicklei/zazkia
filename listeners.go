@@ -37,15 +37,24 @@ func startListeners(routes []*Route) {
 func acceptConnections(route *Route, ln net.Listener) {
 	log.Printf("start tcp listening for %v", route)
 	for {
-		if !route.Transport.AcceptConnections {
+		if !route.Transport.isAcceptConnections() {
 			log.Printf("not accepting new connections for %s, retrying in 1 second", route.Label)
 			time.Sleep(1 * time.Second)
 			continue
 		}
+		// Accept is blocking so changing the transport will not prevent from getting a connection.
 		conn, err := ln.Accept()
 		if err != nil {
 			log.Printf("failed to accept new connections for %s because [%v]", route.Label, err)
 			break
+		}
+		// Is Accept was disbled then close it
+		if !route.Transport.isAcceptConnections() {
+			log.Printf("got new connection but accept connections is not enabled for [%v], so I will close it immediately", route.Label)
+			if err := conn.Close(); err != nil {
+				log.Printf("failed to close connection for %s because [%v]", route.Label, err)
+			}
+			continue
 		}
 		go handleConnection(route, conn)
 	}

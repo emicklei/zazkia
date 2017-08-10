@@ -36,7 +36,7 @@ func (rr routeResource) addWebServiceTo(container *restful.Container) {
 	RouteWithTags(ws, ws.GET("/").To(rr.getRoutes).
 		Doc("All routes as defined in the configuration."))
 	RouteWithTags(ws, ws.POST("/{label}/toggle-accept").To(rr.toggleAcceptConnections).
-		Doc("Change whether new connections can be accepted for this route.").
+		Doc("Change whether new connections can be accepted for this route. Return").
 		Param(labelParam))
 	RouteWithTags(ws, ws.GET("/{label}/links").To(rr.getLinksForRoute).
 		Doc("All links for connections created for this route.").
@@ -67,10 +67,11 @@ func (rr routeResource) toggleAcceptConnections(request *restful.Request, respon
 		http.NotFound(response, request.Request)
 		return
 	}
-	route.Transport.AcceptConnections = !route.Transport.AcceptConnections
-	if route.Transport.AcceptConnections {
+	isAccepting := route.Transport.toggleAcceptConnections()
+	if isAccepting {
 		log.Printf("start tcp listening for [%s]", route.Label)
 	} else {
 		log.Printf("stop tcp listening for [%s]", route.Label)
 	}
+	response.WriteAsJson(isAccepting)
 }
