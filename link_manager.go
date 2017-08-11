@@ -84,6 +84,14 @@ func (m *linkManager) closeAllWithError() {
 	}
 }
 
+func (m *linkManager) closeAllForRoute(label string) {
+	for _, each := range m.links {
+		if each.route.Label == label {
+			m.disconnectAndRemove(each.ID)
+		}
+	}
+}
+
 func (m *linkManager) APIGroups() []*APILinkGroup {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()

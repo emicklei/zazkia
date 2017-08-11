@@ -8,7 +8,7 @@ The zazkia-routes.json has a route to link the client and server with zazkia as 
 ## start zazkia
 First build the program in the project home and start it in the systemtest folder:
 
-    go build
+    go build -o $GOPATH/bin/zazkia
     cd systemtest
     zazkia
 

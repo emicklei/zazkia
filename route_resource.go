@@ -42,6 +42,10 @@ func (rr routeResource) addWebServiceTo(container *restful.Container) {
 		Doc("All links for connections created for this route.").
 		Metadata("swagger.tags", "routes,links").
 		Param(labelParam))
+	RouteWithTags(ws, ws.POST("/{label}/links/close").To(rr.closeAllLinksForRoute).
+		Doc("Close all connections created by links for this route.").
+		Metadata("swagger.tags", "routes,links").
+		Param(labelParam))
 	container.Add(ws)
 }
 
@@ -50,8 +54,13 @@ func (rr routeResource) getRoutes(request *restful.Request, response *restful.Re
 }
 
 func (rr routeResource) getLinksForRoute(request *restful.Request, response *restful.Response) {
-	id := request.PathParameter("label")
-	response.WriteAsJson(linkMgr.APILinks(id)) // TODO should not use global
+	response.WriteAsJson(linkMgr.APILinks(request.PathParameter("label"))) // TODO should not use global linkMgr
+}
+
+func (rr routeResource) closeAllLinksForRoute(request *restful.Request, response *restful.Response) {
+	label := request.PathParameter("label")
+	log.Printf("[rest api] close all links for route [%s]", label)
+	linkMgr.closeAllForRoute(label) // TODO should not use global linkMgr
 }
 
 func (rr routeResource) toggleAcceptConnections(request *restful.Request, response *restful.Response) {
@@ -69,9 +78,9 @@ func (rr routeResource) toggleAcceptConnections(request *restful.Request, respon
 	}
 	isAccepting := route.Transport.toggleAcceptConnections()
 	if isAccepting {
-		log.Printf("start tcp listening for [%s]", route.Label)
+		log.Printf("[rest api] start tcp listening for [%s]", route.Label)
 	} else {
-		log.Printf("stop tcp listening for [%s]", route.Label)
+		log.Printf("[rest api] stop tcp listening for [%s]", route.Label)
 	}
 	response.WriteAsJson(isAccepting)
 }

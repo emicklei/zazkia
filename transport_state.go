@@ -45,6 +45,7 @@ func (t *TransportState) isAcceptConnections() bool {
 func (t *TransportState) toggleAcceptConnections() bool {
 	t.mutex.Lock()
 	v := !t.AcceptConnections
+	t.AcceptConnections = v
 	t.mutex.Unlock()
 	return v
 }

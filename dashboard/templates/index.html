@@ -63,6 +63,7 @@
                     <div class="route">
                         <strong>route</strong> localhost:{{.Route.ListenPort}} &#8660; {{.Route.ServiceHostname}}:{{.Route.ServicePort}}
                         <a class="btn btn-default {{if .Route.Transport.AcceptConnections}} btn-primary {{end}}" href="javascript:doRouteAction('{{ .Route.Label }}','toggle-accept');">accept connections</a>
+                        <a class="btn btn-default btn-primary" href="javascript:doRouteAction('{{ .Route.Label }}','links/close');">close all connections</a>
                     </div>
                     <p></p>
                     <ol>
