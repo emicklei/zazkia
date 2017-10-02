@@ -47,10 +47,10 @@ func readRoutes(location string) (routes []*Route, err error) {
 	return
 }
 
-func (r Route) tcp() string {
+func (r *Route) tcp() string {
 	return fmt.Sprintf("%s:%d", r.ServiceHostname, r.ServicePort)
 }
 
-func (r Route) String() string {
+func (r *Route) String() string {
 	return fmt.Sprintf("[%s] :%d <-> %s:%d {%v}", r.Label, r.ListenPort, r.ServiceHostname, r.ServicePort, r.Transport)
 }
