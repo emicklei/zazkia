@@ -52,7 +52,7 @@ func (t *TransportState) toggleAcceptConnections() bool {
 
 // TODO protect access to other values
 
-func (s TransportState) String() string {
+func (s *TransportState) String() string {
 	return fmt.Sprintf("accept=%v,delay=%d,s2c=%v,rfc=%v,s2s=%v,rfs=%v,thr=%d,cor=%s,v=%v",
 		s.isAcceptConnections(),
 		s.DelayServiceResponse, s.SendingToClient, s.ReceivingFromClient, s.SendingToService, s.ReceivingFromService,
