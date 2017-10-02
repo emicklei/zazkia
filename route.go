@@ -42,6 +42,9 @@ func readRoutes(location string) (routes []*Route, err error) {
 	for _, each := range routes {
 		if each.Transport == nil {
 			each.Transport = newDefaultTransportState()
+		} else {
+			// make sure internal state is initialized
+			each.Transport.postReadInitialize()
 		}
 	}
 	return

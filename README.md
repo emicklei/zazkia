@@ -110,7 +110,7 @@ A Docker image is available on Docker Hub.
 
 Zazkia will look for a file called **zazkia-routes.json**.
 The web UI will be running on http://localhost:9191
-When using Docker, routes must use listener ports in the range 9200-9300 and 3306 (mysql) and 5432 (postgres) and 8080 (tomcat,jboss).
+When using Docker, routes must use listener ports in the range 9200-9300 or 3306 (mysql) or 5432 (postgres) or 8080 (tomcat,jboss).
 
 ### Examples
 
@@ -118,7 +118,7 @@ See the examples folder for simple usecase examples.
 
 ### Build your own image
 
-	GOOS=linux go build && docker build -t zazkia .
+	GOOS=linux go build && docker build -t emicklei/zazkia:lastest .
 
 
 © 2017, [ernestmicklei.com](http://ernestmicklei.com).  Apache v2 License. Contributions welcome.	

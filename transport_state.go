@@ -69,3 +69,7 @@ func newDefaultTransportState() *TransportState {
 		AcceptConnections:    true,
 	}
 }
+
+func (t *TransportState) postReadInitialize() {
+	t.mutex = new(sync.RWMutex)
+}
