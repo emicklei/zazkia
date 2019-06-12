@@ -118,7 +118,7 @@ See the examples folder for simple usecase examples.
 
 ### Build your own image
 
-	GOOS=linux go build && docker build -t emicklei/zazkia:lastest .
+	GOOS=linux go build && docker build -t emicklei/zazkia:latest .
 
 
 © 2017, [ernestmicklei.com](http://ernestmicklei.com).  Apache v2 License. Contributions welcome.	
