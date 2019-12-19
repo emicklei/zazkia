@@ -27,9 +27,9 @@ import (
 	"os/signal"
 	"strconv"
 
-	"github.com/elazarl/go-bindata-assetfs"
-	restful "github.com/emicklei/go-restful"
-	restfulspec "github.com/emicklei/go-restful-openapi"
+	assetfs "github.com/elazarl/go-bindata-assetfs"
+	restfulspec "github.com/emicklei/go-restful-openapi/v2"
+	restful "github.com/emicklei/go-restful/v3"
 	"github.com/go-openapi/spec"
 )
 
@@ -97,11 +97,11 @@ func cleanAndExit(code int) {
 
 func addSwagger() {
 	config := restfulspec.Config{
-		WebServices:    restful.RegisteredWebServices(),
-		WebServicesURL: "http://localhost:" + strconv.Itoa(*oAdminPort),
-		APIPath:        "/apidocs.json",
+		WebServices:                   restful.RegisteredWebServices(),
+		WebServicesURL:                "http://localhost:" + strconv.Itoa(*oAdminPort),
+		APIPath:                       "/apidocs.json",
 		PostBuildSwaggerObjectHandler: extendSwaggerObject}
-	restfulspec.RegisterOpenAPIService(config, restful.DefaultContainer)
+	restful.DefaultContainer.Add(restfulspec.NewOpenAPIService(config))
 
 	// static file serving
 	swaggerUI := &assetfs.AssetFS{Asset: Asset, AssetDir: AssetDir, AssetInfo: AssetInfo, Prefix: "swagger-ui/dist"}

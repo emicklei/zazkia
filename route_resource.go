@@ -20,7 +20,7 @@ import (
 	"log"
 	"net/http"
 
-	restful "github.com/emicklei/go-restful"
+	restful "github.com/emicklei/go-restful/v3"
 )
 
 type routeResource struct {

@@ -19,8 +19,8 @@ package main
 import (
 	"strings"
 
-	restful "github.com/emicklei/go-restful"
-	restfulspec "github.com/emicklei/go-restful-openapi"
+	restfulspec "github.com/emicklei/go-restful-openapi/v2"
+	restful "github.com/emicklei/go-restful/v3"
 )
 
 // RouteWithTags set the OpenAPI tags for this route.
