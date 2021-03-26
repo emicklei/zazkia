@@ -34,6 +34,7 @@ import (
 )
 
 var (
+	oClose      = flag.Bool("c", false, "automatic connection close")
 	oVerbose    = flag.Bool("v", false, "verbose logging")
 	oAdminPort  = flag.Int("p", 9191, "port on which the admin http server will listen")
 	oConfigfile = flag.String("f", "zazkia-routes.json", "route definition")

@@ -58,7 +58,7 @@ Full zazkia-routes.json example
 | accept-connections | whether connections from the client are accepted | true, false |
 | throttle-service-response | bytes per second | non-negative integer |
 | delay-service-response | milliseconds delay | non-negative integer |
-| break-service-response | percentage of broken connection | integer between 0 and 100 |
+| break-service-response | percentage of broken connections | integer between 0 and 100 |
 | service-response-corrupt-method | how the bytes are mangled | **empty**, randomize |
 | sending-to-client | whether a response from the service is sent back to the client | true, false |
 | receiving-from-client | whether a request from the client is read | true, false |
@@ -94,6 +94,17 @@ Make sure $GOPATH/bin is on your $PATH.
 	go build
 
 ## Run
+
+### Usage
+
+    ./zazkia  -h
+    2021/03/26 14:38:06 zazkia - tpc proxy for simulating network problems
+    Usage of ./zazkia:
+      -f string
+            route definition (default "zazkia-routes.json")
+      -p int
+            port on which the admin http server will listen (default 9191)
+      -v    verbose logging
 
 Defaults (-p 9191 -f zazkia-routes.json)
 

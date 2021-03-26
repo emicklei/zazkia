@@ -18,6 +18,7 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"log"
 	"net"
 	"time"
@@ -70,20 +71,35 @@ func handleConnection(route *Route, clientConn net.Conn) {
 
 	link := newLink(route, clientConn, serviceConn)
 	linkMgr.add(link)
-
+	
 	log.Printf("[%s:%d] start handling client(%v) <=> service(%v)\n", route.Label, link.ID, addr, serviceConn.RemoteAddr())
 	// service <- client
 	go func() {
 		if err := transport(link, serviceConn, clientConn, !AccessesService); err != nil {
-			log.Printf("[%s:%d] stopped writing to service (%v), reading from client(%v), with error (%v)\n", route.Label, link.ID, serviceConn.RemoteAddr(), clientConn.RemoteAddr(), err)
+			if( err == io.EOF ) {
+				log.Printf("[%s:%d] stopped writing to service (%v), end of reading from client(%v)\n", route.Label, link.ID, serviceConn.RemoteAddr(), clientConn.RemoteAddr())
+			} else {
+				log.Printf("[%s:%d] stopped writing to service (%v), reading from client(%v), with error (%v)\n", route.Label, link.ID, serviceConn.RemoteAddr(), clientConn.RemoteAddr(), err)
+			}
 			link.clientError = err
+		}
+		if( *oClose ) {
+			time.Sleep(time.Duration(1000) * time.Millisecond)
+			linkMgr.disconnectAndRemove(link.ID)
 		}
 	}()
 	// client <- service
 	go func() {
 		if err := transport(link, clientConn, serviceConn, AccessesService); err != nil {
-			log.Printf("[%s:%d] stopped reading from service (%v), writing to client (%v), with error (%v)\n", route.Label, link.ID, serviceConn.RemoteAddr(), clientConn.RemoteAddr(), err)
+			if( err == io.EOF ) {
+				log.Printf("[%s:%d] stopped reading from service (%v), end of writing to client (%v)\n", route.Label, link.ID, serviceConn.RemoteAddr(), clientConn.RemoteAddr())
+			} else {
+				log.Printf("[%s:%d] stopped reading from service (%v), writing to client (%v), with error (%v)\n", route.Label, link.ID, serviceConn.RemoteAddr(), clientConn.RemoteAddr(), err)
+			}
 			link.serviceError = err
+		}
+		if( *oClose ) {
+			linkMgr.disconnectAndRemove(link.ID)
 		}
 	}()
 }

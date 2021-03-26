@@ -39,7 +39,8 @@ func (d breaker) Write(link *link, w io.Writer, p parcel) (parcel, error) {
 	}
 	if( pct<=link.transport.BreakServiceResponse ) {
 		if link.transport.BreakServiceResponse >= 0 {
-			return emptyParcel, nil
+			err := errBreak
+			return emptyParcel, err
 		}
 	} else {
 		return p, nil

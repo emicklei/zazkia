@@ -16,7 +16,10 @@ limitations under the License.
 
 package main
 
-import "io"
+import (
+	"io"
+	"log"
+)
 
 // AccessesService is a parameter name
 const AccessesService = true
@@ -49,19 +52,55 @@ func transport(link *link, w io.Writer, r io.Reader, readsFromService bool) erro
 	}
 	for {
 		var p parcel
+		if( *oVerbose ) { 
+			if readsFromService { 
+				log.Printf("[-:%d] Start reading from service\n", link.ID) 
+			} else {
+				log.Printf("[-:%d] Start reading from client\n", link.ID) 
+			}
+		}
 		for _, each := range readers {
 			pp, err := each.Read(link, r, p)
 			if err != nil {
+				if( *oVerbose ) { 
+					if readsFromService {
+						log.Printf("[-:%d] Reading error (%v) from service\n", link.ID, err) 
+					} else {
+						log.Printf("[-:%d] Reading error (%v) from client\n", link.ID, err) 
+					}
+				}
 				return err
 			}
 			p = pp
+		}
+		if( *oVerbose ) {
+			if readsFromService { 	
+				log.Printf("[-:%d] Start sending to client\n", link.ID) 
+			} else {
+				log.Printf("[-:%d] Start sending to service\n", link.ID) 
+			}
 		}
 		for _, each := range writers {
 			pp, err := each.Write(link, w, p)
 			if err != nil {
+				if( *oVerbose ) { 
+					if readsFromService {
+						log.Printf("[-:%d] Writing error (%v) to client\n", link.ID, err) 
+					} else {
+						log.Printf("[-:%d] Writing error (%v) to service\n", link.ID, err) 
+					}
+				}
 				return err
 			}
 			p = pp
 		}
+		if( *oVerbose ) {
+			if readsFromService {
+				log.Printf("[-:%d] End of send to client\n", link.ID) 
+			} else {
+				log.Printf("[-:%d] End of send to service\n", link.ID) 
+			}
+		}
 	}
+	return nil
 }
