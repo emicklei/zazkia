@@ -29,6 +29,7 @@ func transport(link *link, w io.Writer, r io.Reader, readsFromService bool) erro
 		// writes to client
 		writers = append(writers,
 			clientAccess{},
+			breaker{},
 			corrupter{},
 			delayer{},
 			throttler{},

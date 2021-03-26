@@ -6,7 +6,7 @@ you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
     http://www.apache.org/licenses/LICENSE-2.0
-
+DelayServiceResponse
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -33,6 +33,7 @@ var routesData = `
 	        "transport": {
 				"throttle-service-response": 1,
 				"delay-service-response": 1,
+				"break-service-response": 1,
 				"sending-to-client": true,
 				"receiving-from-client": true,
 				"sending-to-service": true,
@@ -73,6 +74,9 @@ func TestReadRoutes(t *testing.T) {
 		}
 		if each.Transport.DelayServiceResponse == 0 {
 			t.Error("missing DelayServiceResponse")
+		}
+		if each.Transport.BreakServiceRespone == 0 {
+			t.Error("missing BreakServiceRespone")
 		}
 		if each.Transport.ThrottleServiceResponse == 0 {
 			t.Error("missing ThrottleServiceResponse")

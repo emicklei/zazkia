@@ -42,6 +42,7 @@ Full zazkia-routes.json example
 				"accept-connections": true,
 				"throttle-service-response": 1000,
 				"delay-service-response": 100,
+				"break-service-response": 10,
 				"service-response-corrupt-method": "randomize",
 				"sending-to-client": true,
 				"receiving-from-client": true,
@@ -57,6 +58,7 @@ Full zazkia-routes.json example
 | accept-connections | whether connections from the client are accepted | true, false |
 | throttle-service-response | bytes per second | non-negative integer |
 | delay-service-response | milliseconds delay | non-negative integer |
+| break-service-response | percentage of broken connection | integer between 0 and 100 |
 | service-response-corrupt-method | how the bytes are mangled | **empty**, randomize |
 | sending-to-client | whether a response from the service is sent back to the client | true, false |
 | receiving-from-client | whether a request from the client is read | true, false |
@@ -70,6 +72,7 @@ Full zazkia-routes.json example
 		"accept-connections": true,
 		"throttle-service-response": 0,
 		"delay-service-response": 0,
+		"break-service-response": 0,
 		"service-response-corrupt-method": "",
 		"sending-to-client": true,
 		"receiving-from-client": true,
