@@ -75,7 +75,7 @@ func TestReadRoutes(t *testing.T) {
 		if each.Transport.DelayServiceResponse == 0 {
 			t.Error("missing DelayServiceResponse")
 		}
-		if each.Transport.BreakServiceRespone == 0 {
+		if each.Transport.BreakServiceResponse == 0 {
 			t.Error("missing BreakServiceRespone")
 		}
 		if each.Transport.ThrottleServiceResponse == 0 {

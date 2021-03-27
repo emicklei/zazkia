@@ -99,6 +99,7 @@ func handleConnection(route *Route, clientConn net.Conn) {
 			link.serviceError = err
 		}
 		if( *oClose ) {
+			time.Sleep(time.Duration(1000) * time.Millisecond)
 			linkMgr.disconnectAndRemove(link.ID)
 		}
 	}()

@@ -87,9 +87,17 @@ To build the project locally and test it.
 
 	go get -u github.com/jteeuwen/go-bindata/...
 
-Make sure $GOPATH/bin is on your $PATH.
+Make sure $GOPATH/bin is on your $PATH, and generate `bindata.go` file (containing embedded data from `/dashboard` and `/swagger-ui` path):
 
 	go generate
+	
+If `AssetInfo` is not present in `bindata.go`, add it:
+
+     echo 'func AssetInfo(name string) (f os.FileInfo, err error) { return }' >> bindata.go
+	
+If `os` library is not present in `import` block at the begining of `bindata.go` file, add it.  
+Then.
+
 	go test
 	go build
 
