@@ -22,10 +22,12 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"math/rand"
 	"net/http"
 	"os"
 	"os/signal"
 	"strconv"
+	"time"
 
 	assetfs "github.com/elazarl/go-bindata-assetfs"
 	restfulspec "github.com/emicklei/go-restful-openapi/v2"
@@ -47,6 +49,8 @@ func main() {
 	log.Println("zazkia - tpc proxy for simulating network problems")
 	flag.Parse()
 
+	rand.Seed(time.Now().UnixNano())
+	
 	// handle SIGINT (control+c)
 	go func() {
 		c := make(chan os.Signal, 1)

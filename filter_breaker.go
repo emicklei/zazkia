@@ -32,16 +32,14 @@ func (d breaker) Write(link *link, w io.Writer, p parcel) (parcel, error) {
 	if link.transport.BreakServiceResponse == 0 {
 		return p, nil
 	}
-	pct := rand.Intn(100)+1
+	pct := rand.Intn(99)+1
 	if link.transport.Verbose {
 		log.Printf("[%s] broken %d pct of writing %d bytes",
 			link.route.Label, link.transport.BreakServiceResponse, p.read)
 	}
 	if( pct<=link.transport.BreakServiceResponse ) {
-		if link.transport.BreakServiceResponse >= 0 {
-			err := errBreak
-			return emptyParcel, err
-		}
+		err := errBreak
+		return emptyParcel, err
 	} else {
 		return p, nil
 	}
