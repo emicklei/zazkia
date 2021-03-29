@@ -51,3 +51,5 @@ test4:
 
 clean:
 	$(DOCKER) system prune -f -a
+	if [ -f  /tmp/basicweb.pid ] ; then cat /tmp/basicweb.pid | xargs kill ; fi
+	if [ -f  /tmp/zazkia.pid ] ; then cat /tmp/zazkia.pid | xargs kill ; fi
