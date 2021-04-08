@@ -42,6 +42,7 @@ Full zazkia-routes.json example
 				"accept-connections": true,
 				"throttle-service-response": 1000,
 				"delay-service-response": 100,
+				"break-service-response": 10,
 				"service-response-corrupt-method": "randomize",
 				"sending-to-client": true,
 				"receiving-from-client": true,
@@ -57,6 +58,7 @@ Full zazkia-routes.json example
 | accept-connections | whether connections from the client are accepted | true, false |
 | throttle-service-response | bytes per second | non-negative integer |
 | delay-service-response | milliseconds delay | non-negative integer |
+| break-service-response | percentage of broken connections | integer between 0 and 100 |
 | service-response-corrupt-method | how the bytes are mangled | **empty**, randomize |
 | sending-to-client | whether a response from the service is sent back to the client | true, false |
 | receiving-from-client | whether a request from the client is read | true, false |
@@ -70,6 +72,7 @@ Full zazkia-routes.json example
 		"accept-connections": true,
 		"throttle-service-response": 0,
 		"delay-service-response": 0,
+		"break-service-response": 0,
 		"service-response-corrupt-method": "",
 		"sending-to-client": true,
 		"receiving-from-client": true,
@@ -84,13 +87,32 @@ To build the project locally and test it.
 
 	go get -u github.com/jteeuwen/go-bindata/...
 
-Make sure $GOPATH/bin is on your $PATH.
+Make sure $GOPATH/bin is on your $PATH, and generate `bindata.go` file (containing embedded data from `/dashboard` and `/swagger-ui` path):
 
 	go generate
+	
+If `AssetInfo` is not present in `bindata.go`, add it:
+
+     echo 'func AssetInfo(name string) (f os.FileInfo, err error) { return }' >> bindata.go
+	
+If `os` library is not present in `import` block at the begining of `bindata.go` file, add it.  
+Then.
+
 	go test
 	go build
 
 ## Run
+
+### Usage
+
+    ./zazkia  -h
+    2021/03/26 14:38:06 zazkia - tpc proxy for simulating network problems
+    Usage of ./zazkia:
+      -f string
+            route definition (default "zazkia-routes.json")
+      -p int
+            port on which the admin http server will listen (default 9191)
+      -v    verbose logging
 
 Defaults (-p 9191 -f zazkia-routes.json)
 

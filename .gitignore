@@ -1,3 +1,6 @@
 zazkia
+zazkia.exe
 /zazkia-routes.json
 /bindata.go
+vendor
+basicweb

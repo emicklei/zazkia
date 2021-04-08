@@ -98,17 +98,18 @@ func (l *link) resetTransport() {
 		SendingToService:             true,
 		ReceivingFromService:         true,
 		DelayServiceResponse:         0,
+		BreakServiceResponse:         0,
 		ThrottleServiceResponse:      0,
 		ServiceResponseCorruptMethod: "",
 	}
 }
 
 func (l link) String() string {
-	return fmt.Sprintf("[%s] %d: %s (s=%v,r=%v) <-> %s (s=%v,r=%v,d=%d,v=%v) [%s]",
+	return fmt.Sprintf("[%s] %d: %s (s=%v,r=%v) <-> %s (s=%v,r=%v,d=%d,b=%d,v=%v) [%s]",
 		l.route.Label, l.ID,
 		l.clientConn.RemoteAddr().String(), l.transport.SendingToService, l.transport.ReceivingFromService,
 		l.serviceConn.RemoteAddr().String(), l.transport.SendingToClient, l.transport.ReceivingFromClient,
-		l.transport.DelayServiceResponse, l.transport.Verbose,
+		l.transport.DelayServiceResponse, l.transport.BreakServiceResponse, l.transport.Verbose,
 		l.stats.String())
 }
 

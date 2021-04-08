@@ -22,10 +22,12 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"math/rand"
 	"net/http"
 	"os"
 	"os/signal"
 	"strconv"
+	"time"
 
 	assetfs "github.com/elazarl/go-bindata-assetfs"
 	restfulspec "github.com/emicklei/go-restful-openapi/v2"
@@ -34,6 +36,7 @@ import (
 )
 
 var (
+	oClose      = flag.Bool("c", false, "automatic connection close")
 	oVerbose    = flag.Bool("v", false, "verbose logging")
 	oAdminPort  = flag.Int("p", 9191, "port on which the admin http server will listen")
 	oConfigfile = flag.String("f", "zazkia-routes.json", "route definition")
@@ -46,6 +49,8 @@ func main() {
 	log.Println("zazkia - tpc proxy for simulating network problems")
 	flag.Parse()
 
+	rand.Seed(time.Now().UnixNano())
+	
 	// handle SIGINT (control+c)
 	go func() {
 		c := make(chan os.Signal, 1)

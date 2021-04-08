@@ -45,6 +45,10 @@ func (l linkResource) addWebServiceTo(container *restful.Container) {
 		Doc("Delay sending the response to the client").
 		Param(ws.QueryParameter("ms", "milliseconds to delay transport to the client.").DataType("integer")).
 		Param(idParam))
+	RouteWithTags(ws, ws.POST("/{id}/break-response").To(l.breakResponse).
+		Doc("Break sending the response to the client").
+		Param(ws.QueryParameter("pct", "percentage of broken transport to the client.").DataType("integer")).
+		Param(idParam))
 	RouteWithTags(ws, ws.POST("/{id}/toggle-reads-client").To(l.toggleReadsClient).
 		Doc("Change whether reading data from the client is enabled.").
 		Param(idParam))
@@ -119,6 +123,37 @@ func (l linkResource) delayResponse(request *restful.Request, response *restful.
 			return
 		}
 		link.transport.DelayServiceResponse = msi
+	}
+
+}
+
+func (l linkResource) breakResponse(request *restful.Request, response *restful.Response) {
+	id, ok := linkIDFromRequest(request, response)
+	if !ok {
+		return
+	}
+	link := l.manager.get(id)
+	if link == nil {
+		response.WriteHeader(http.StatusNotFound)
+		return
+	}
+	// toggle
+	if link.transport.BreakServiceResponse > 0 {
+		link.transport.BreakServiceResponse = 0
+	} else {
+		pct := request.QueryParameter("pct")
+		msi, err := strconv.Atoi(pct)
+		if msi < 0 {
+			err = errors.New("pct parameter cannot be negative")
+		}
+		if msi > 100 {
+			err = errors.New("pct parameter cannot be upper than 100")
+		}
+		if err != nil {
+			response.WriteHeader(http.StatusBadRequest)
+			return
+		}
+		link.transport.BreakServiceResponse = msi
 	}
 
 }

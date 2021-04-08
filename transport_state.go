@@ -27,6 +27,7 @@ type TransportState struct {
 	Verbose                      bool          `json:"verbose"`
 	ThrottleServiceResponse      int           `json:"throttle-service-response"` // bytes per second
 	DelayServiceResponse         int           `json:"delay-service-response"`    // milliseconds
+	BreakServiceResponse         int           `json:"break-service-response"`    // percentage (0<=break<=100)
 	SendingToClient              bool          `json:"sending-to-client"`
 	ReceivingFromClient          bool          `json:"receiving-from-client"`
 	SendingToService             bool          `json:"sending-to-service"`
@@ -53,9 +54,9 @@ func (t *TransportState) toggleAcceptConnections() bool {
 // TODO protect access to other values
 
 func (s *TransportState) String() string {
-	return fmt.Sprintf("accept=%v,delay=%d,s2c=%v,rfc=%v,s2s=%v,rfs=%v,thr=%d,cor=%s,v=%v",
+	return fmt.Sprintf("accept=%v,delay=%d,break=%d,s2c=%v,rfc=%v,s2s=%v,rfs=%v,thr=%d,cor=%s,v=%v",
 		s.isAcceptConnections(),
-		s.DelayServiceResponse, s.SendingToClient, s.ReceivingFromClient, s.SendingToService, s.ReceivingFromService,
+		s.DelayServiceResponse, s.BreakServiceResponse, s.SendingToClient, s.ReceivingFromClient, s.SendingToService, s.ReceivingFromService,
 		s.ThrottleServiceResponse, s.ServiceResponseCorruptMethod, s.Verbose)
 }
 
