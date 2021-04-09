@@ -50,7 +50,7 @@ func main() {
 	flag.Parse()
 
 	rand.Seed(time.Now().UnixNano())
-	
+
 	// handle SIGINT (control+c)
 	go func() {
 		c := make(chan os.Signal, 1)
@@ -119,13 +119,16 @@ func extendSwaggerObject(s *spec.Swagger) {
 			Title:       "Zazkia REST API",
 			Description: "Resources for managing Routes and Links",
 			Contact: &spec.ContactInfo{
-				Name:  "Ernest Micklei",
-				Email: "zazkia@philemonworks.com",
-				URL:   "https://github.com/emicklei/zazkia",
+				ContactInfoProps: spec.ContactInfoProps{
+					Name: "Ernest Micklei",
+					URL:  "https://github.com/emicklei/zazkia",
+				},
 			},
 			License: &spec.License{
-				Name: "MIT License",
-				URL:  "https://opensource.org/licenses/MIT",
+				LicenseProps: spec.LicenseProps{
+					Name: "MIT License",
+					URL:  "https://opensource.org/licenses/MIT",
+				},
 			},
 			Version: "1.0.0",
 		},
