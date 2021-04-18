@@ -3,6 +3,9 @@ is a tool that simulates all kinds of connection problems with a tcp connection 
 
 [![Build Status](https://travis-ci.org/emicklei/zazkia.png)](https://travis-ci.org/emicklei/zazkia)
 
+![systemtest dashboard](./systemtest/systemtest.png)
+
+
 ### How does it work ?
 In order to apply misbehavior, zazkia must be used as a proxy between a client and service.
 It will accept tcp connections from a client and for each new one, will create a connection to the target service.
@@ -87,17 +90,9 @@ To build the project locally and test it.
 
 	go get -u github.com/jteeuwen/go-bindata/...
 
-Make sure $GOPATH/bin is on your $PATH, and generate `bindata.go` file (containing embedded data from `/dashboard` and `/swagger-ui` path):
+Make sure $GOPATH/bin is on your $PATH, and generate `bindata.go` file (will contain embedded data from `/dashboard` and `/swagger-ui` path):
 
 	go generate
-	
-If `AssetInfo` is not present in `bindata.go`, add it:
-
-     echo 'func AssetInfo(name string) (f os.FileInfo, err error) { return }' >> bindata.go
-	
-If `os` library is not present in `import` block at the begining of `bindata.go` file, add it.  
-Then.
-
 	go test
 	go build
 

@@ -76,7 +76,7 @@ func main() {
 	log.Printf("start http listening on :%d\n", *oAdminPort)
 
 	// static file serving
-	dashboard := &assetfs.AssetFS{Asset: Asset, AssetDir: AssetDir, AssetInfo: AssetInfo, Prefix: "dashboard"}
+	dashboard := &assetfs.AssetFS{Asset: Asset, AssetDir: AssetDir /* AssetInfo: AssetInfo, */, Prefix: "dashboard"}
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(dashboard)))
 
 	addRESTResources()
@@ -109,7 +109,7 @@ func addSwagger() {
 	restful.DefaultContainer.Add(restfulspec.NewOpenAPIService(config))
 
 	// static file serving
-	swaggerUI := &assetfs.AssetFS{Asset: Asset, AssetDir: AssetDir, AssetInfo: AssetInfo, Prefix: "swagger-ui/dist"}
+	swaggerUI := &assetfs.AssetFS{Asset: Asset, AssetDir: AssetDir /* AssetInfo: AssetInfo,*/, Prefix: "swagger-ui/dist"}
 	http.Handle("/swagger-ui/", http.StripPrefix("/swagger-ui/", http.FileServer(swaggerUI)))
 }
 
