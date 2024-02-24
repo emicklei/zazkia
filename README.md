@@ -1,8 +1,6 @@
 > zazkia
 is a tool that simulates all kinds of connection problems with a tcp connection (reset,delay,throttle,corrupt).
 
-[![Build Status](https://travis-ci.org/emicklei/zazkia.png)](https://travis-ci.org/emicklei/zazkia)
-
 ![systemtest dashboard](./systemtest/systemtest.png)
 
 
