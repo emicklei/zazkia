@@ -23,7 +23,7 @@ type APILinkGroup struct {
 
 func APIGroups(links []APILink) []APILinkGroup {
 	return []APILinkGroup{
-		APILinkGroup{
+		{
 			Links: links,
 		},
 	}

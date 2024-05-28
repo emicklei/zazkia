@@ -74,7 +74,7 @@ func Test_flusher(t *testing.T) {
 	p := parcel{[]byte{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}, 10, 0}
 
 	f := sender{}
-	p, err := f.Write(l, w, p)
+	_, err := f.Write(l, w, p)
 	if err != nil {
 		t.Error(err.Error())
 	}
@@ -91,7 +91,7 @@ func Test_throttler(t *testing.T) {
 
 	f := throttler{}
 	l.transport.ThrottleServiceResponse = 2
-	p, err := f.Write(l, w, p)
+	_, err := f.Write(l, w, p)
 	if err != nil {
 		t.Error(err.Error())
 	}
@@ -109,7 +109,7 @@ func Test_delayer(t *testing.T) {
 	d := delayer{}
 	l.transport.DelayServiceResponse = 100
 	now := time.Now()
-	p, err := d.Write(l, w, p)
+	_, err := d.Write(l, w, p)
 	if err != nil {
 		t.Error(err.Error())
 	}
