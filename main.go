@@ -16,20 +16,19 @@ limitations under the License.
 
 package main
 
-//go:generate go-bindata -pkg main dashboard/... swagger-ui/...
-
 import (
+	"embed"
 	"flag"
 	"fmt"
 	"log"
-	"math/rand"
 	"net/http"
 	"os"
 	"os/signal"
 	"strconv"
-	"time"
+	"strings"
 
-	assetfs "github.com/elazarl/go-bindata-assetfs"
+	_ "embed"
+
 	restfulspec "github.com/emicklei/go-restful-openapi/v2"
 	restful "github.com/emicklei/go-restful/v3"
 	"github.com/go-openapi/spec"
@@ -45,11 +44,15 @@ var (
 	linkMgr  = newLinkManager()
 )
 
+//go:embed dashboard
+var dashboardDir embed.FS
+
+//go:embed swagger-ui
+var swaggerUIDir embed.FS
+
 func main() {
 	log.Println("zazkia - tpc proxy for simulating network problems")
 	flag.Parse()
-
-	rand.Seed(time.Now().UnixNano())
 
 	// handle SIGINT (control+c)
 	go func() {
@@ -73,17 +76,30 @@ func main() {
 	// for each route start a listener
 	startListeners(routes)
 
-	log.Printf("start http listening on :%d\n", *oAdminPort)
+	log.Printf("start http listening on http://localhost:%d\n", *oAdminPort)
 
 	// static file serving
-	dashboard := &assetfs.AssetFS{Asset: Asset, AssetDir: AssetDir /* AssetInfo: AssetInfo, */, Prefix: "dashboard"}
-	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(dashboard)))
+	http.Handle("/static/", http.StripPrefix("/static/", MIMESetter{Handler: http.FileServer(http.FS(dashboardDir))}))
 
 	addRESTResources()
 	addSwagger()
 
 	log.Println(http.ListenAndServe(fmt.Sprintf(":%d", *oAdminPort), nil))
 	cleanAndExit(1)
+}
+
+type MIMESetter struct {
+	Handler http.Handler
+}
+
+func (m MIMESetter) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	if strings.HasSuffix(r.URL.Path, ".css") {
+		w.Header().Set("content-type", "text/css")
+	}
+	if strings.HasSuffix(r.URL.Path, ".js") {
+		w.Header().Set("content-type", "text/javascript")
+	}
+	m.Handler.ServeHTTP(w, r)
 }
 
 func addRESTResources() {
@@ -109,8 +125,7 @@ func addSwagger() {
 	restful.DefaultContainer.Add(restfulspec.NewOpenAPIService(config))
 
 	// static file serving
-	swaggerUI := &assetfs.AssetFS{Asset: Asset, AssetDir: AssetDir /* AssetInfo: AssetInfo,*/, Prefix: "swagger-ui/dist"}
-	http.Handle("/swagger-ui/", http.StripPrefix("/swagger-ui/", http.FileServer(swaggerUI)))
+	http.Handle("/swagger-ui/", http.StripPrefix("/swagger-ui/", http.FileServer(http.FS(swaggerUIDir))))
 }
 
 func extendSwaggerObject(s *spec.Swagger) {

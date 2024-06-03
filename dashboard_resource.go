@@ -20,6 +20,8 @@ import (
 	"log"
 	"text/template"
 
+	_ "embed"
+
 	restful "github.com/emicklei/go-restful/v3"
 	"github.com/russross/blackfriday"
 )
@@ -27,17 +29,18 @@ import (
 var indexPage *template.Template
 var helpPage *template.Template
 
+//go:embed dashboard/templates/index.html
+var indexHtml string
+
+//go:embed dashboard/templates/help.html
+var helpHtml string
+
+//go:embed dashboard/help.md
+var helpMD []byte
+
 func init() {
-	t, err := Asset("dashboard/templates/index.html")
-	if err != nil {
-		panic("index.html")
-	}
-	indexPage = template.Must(template.New("index.html").Parse(string(t)))
-	t, err = Asset("dashboard/templates/help.html")
-	if err != nil {
-		panic("help.html")
-	}
-	helpPage = template.Must(template.New("help.html").Parse(string(t)))
+	indexPage = template.Must(template.New("index.html").Parse(indexHtml))
+	helpPage = template.Must(template.New("help.html").Parse(helpHtml))
 }
 
 type dashboardResource struct{}
@@ -60,12 +63,7 @@ func (d dashboardResource) getIndex(request *restful.Request, response *restful.
 
 func (d dashboardResource) getHelp(request *restful.Request, response *restful.Response) {
 	response.Header().Set("Content-Type", "text/html")
-	input, err := Asset("dashboard/help.md")
-	if err != nil {
-		response.WriteHeaderAndEntity(404, "could not load/find help.md")
-		return
-	}
-	if err := helpPage.Execute(response, string(blackfriday.MarkdownCommon(input))); err != nil {
+	if err := helpPage.Execute(response, string(blackfriday.MarkdownCommon(helpMD))); err != nil {
 		log.Println("help rendering failed", err)
 	}
 }

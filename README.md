@@ -84,13 +84,6 @@ Full zazkia-routes.json example
 
 ### Build
 
-To build the project locally and test it.
-
-	go get -u github.com/jteeuwen/go-bindata/...
-
-Make sure $GOPATH/bin is on your $PATH, and generate `bindata.go` file (will contain embedded data from `/dashboard` and `/swagger-ui` path):
-
-	go generate
 	go test
 	go build
 
@@ -136,4 +129,4 @@ See the examples folder for simple usecase examples.
 	GOOS=linux go build && docker build -t emicklei/zazkia:latest .
 
 
-© 2023, [ernestmicklei.com](http://ernestmicklei.com).  Apache v2 License. Contributions welcome.	
+© 2024, [ernestmicklei.com](http://ernestmicklei.com).  Apache v2 License. Contributions welcome.	

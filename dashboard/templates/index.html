@@ -9,7 +9,7 @@
     <title>Zazkia - tcp proxy</title>
 
     <!-- Bootstrap -->
-    <link href="/static/bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/dashboard/bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -19,7 +19,7 @@
     <![endif]-->
 
     <!-- Custom styles for this template -->
-    <link href="/static/css/dashboard.css" rel="stylesheet">
+    <link href="/static/dashboard/css/dashboard.css" rel="stylesheet">
 
 </head>
 
@@ -28,19 +28,21 @@
     <nav class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
             <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-                <a class="navbar-brand" href="http://github.com/emicklei/zazkia" target="_blank">github.com/emickei/zazkia</a>
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
+                    aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="http://github.com/emicklei/zazkia"
+                    target="_blank">github.com/emickei/zazkia</a>
             </div>
             <div id="navbar" class="collapse navbar-collapse">
                 <ul class="nav navbar-nav">
                     <li class="active"><a href="/index.html">Home</a></li>
                     <li><a href="/help.html">Help</a></li>
-                    <li><a href="/swagger-ui/?url=/apidocs.json">Swagger</a></li>
+                    <li><a href="/swagger-ui/swagger-ui/dist?url=/apidocs.json">Swagger</a></li>
                 </ul>
             </div>
             <!--/.nav-collapse -->
@@ -61,30 +63,50 @@
                     <!-- apigroup -->
                     <h4>{{ .Route.Label }}</h4>
                     <div class="route">
-                        <strong>route</strong> localhost:{{.Route.ListenPort}} &#8660; {{.Route.ServiceHostname}}:{{.Route.ServicePort}}
-                        <a class="btn btn-default {{if .Route.Transport.AcceptConnections}} btn-primary {{end}}" href="javascript:doRouteAction('{{ .Route.Label }}','toggle-accept');">accept connections</a>
-                        <a class="btn btn-default btn-primary" href="javascript:doRouteAction('{{ .Route.Label }}','links/close');">close all connections</a>
+                        <strong>route</strong> localhost:{{.Route.ListenPort}} &#8660;
+                        {{.Route.ServiceHostname}}:{{.Route.ServicePort}}
+                        <a class="btn btn-default {{if .Route.Transport.AcceptConnections}} btn-primary {{end}}"
+                            href="javascript:doRouteAction('{{ .Route.Label }}','toggle-accept');">accept
+                            connections</a>
+                        <a class="btn btn-default btn-primary"
+                            href="javascript:doRouteAction('{{ .Route.Label }}','links/close');">close all
+                            connections</a>
                     </div>
                     <p></p>
                     <ol>
                         {{ range .Links }}
                         <p>
-                            <a class="btn btn-default btn-danger" href="javascript:doLinkAction({{ .ID }},'close');">close</a>
-                            <a class="btn btn-default {{if gt .State.DelayServiceResponse 0}} btn-warning {{end}}" href="javascript:doLinkAction({{ .ID }},'delay-response?ms=1000');">delay {{if gt .State.DelayServiceResponse 0}} {{.State.DelayServiceResponse}} ms {{end}}</a>
-                            <a class="btn btn-default {{if .State.ReceivingFromClient}} btn-success {{end}}" href="javascript:doLinkAction({{ .ID }},'toggle-reads-client');">read client</a>
-                            <a class="btn btn-default {{if .State.SendingToService}} btn-success {{end}}" href="javascript:doLinkAction({{ .ID }},'toggle-writes-service');">write service</a>
-                            <a class="btn btn-default {{if .State.ReceivingFromService}} btn-success {{end}}" href="javascript:doLinkAction({{ .ID }},'toggle-reads-service');">read service</a>
-                            <a class="btn btn-default {{if .State.SendingToClient}} btn-success {{end}}" href="javascript:doLinkAction({{ .ID }},'toggle-writes-client');">write client</a>
-                            <a class="btn btn-default {{if .State.Verbose}} btn-info {{end}} " href="javascript:doLinkAction({{ .ID }},'toggle-verbose'); ">trace</a>
+                            <a class="btn btn-default btn-danger"
+                                href="javascript:doLinkAction({{ .ID }},'close');">close</a>
+                            <a class="btn btn-default {{if gt .State.DelayServiceResponse 0}} btn-warning {{end}}"
+                                href="javascript:doLinkAction({{ .ID }},'delay-response?ms=1000');">delay {{if gt
+                                .State.DelayServiceResponse 0}} {{.State.DelayServiceResponse}} ms {{end}}</a>
+                            <a class="btn btn-default {{if .State.ReceivingFromClient}} btn-success {{end}}"
+                                href="javascript:doLinkAction({{ .ID }},'toggle-reads-client');">read client</a>
+                            <a class="btn btn-default {{if .State.SendingToService}} btn-success {{end}}"
+                                href="javascript:doLinkAction({{ .ID }},'toggle-writes-service');">write service</a>
+                            <a class="btn btn-default {{if .State.ReceivingFromService}} btn-success {{end}}"
+                                href="javascript:doLinkAction({{ .ID }},'toggle-reads-service');">read service</a>
+                            <a class="btn btn-default {{if .State.SendingToClient}} btn-success {{end}}"
+                                href="javascript:doLinkAction({{ .ID }},'toggle-writes-client');">write client</a>
+                            <a class="btn btn-default {{if .State.Verbose}} btn-info {{end}} "
+                                href="javascript:doLinkAction({{ .ID }},'toggle-verbose'); ">trace</a>
 
-                            <div class="errors ">
-                                {{if gt (len .ClientReceiveError) 0}} client receive error:{{ .ClientReceiveError }} {{end}} {{if gt (len .ServiceReceiveError) 0}} service receive error:{{ .ServiceReceiveError }} {{end}}
-                            </div>
+                        <div class="errors ">
+                            {{if gt (len .ClientReceiveError) 0}} client receive error:{{ .ClientReceiveError }} {{end}}
+                            {{if gt (len .ServiceReceiveError) 0}} service receive error:{{ .ServiceReceiveError }}
+                            {{end}}
+                        </div>
 
-                            <div class="stats ">
-                                client {{if .State.ReceivingFromClient}} &#8658; {{else}} &#8655; {{end}} {{ .Stats.BytesReceivedFromClient}} &#8658; zazkia {{if .State.SendingToService}} &#8658; {{else}} &#8655; {{end}} {{ .Stats.BytesSentToService}} &#8658; service {{if .State.ReceivingFromService}}
-                                &#8658; {{else}} &#8655; {{end}} {{ .Stats.BytesReceivedFromService}} &#8658; zazkia {{if .State.SendingToClient}} &#8658; {{else}} &#8655; {{end}} {{ .Stats.BytesSentToClient}} &#8658; client
-                            </div>
+                        <div class="stats ">
+                            client {{if .State.ReceivingFromClient}} &#8658; {{else}} &#8655; {{end}} {{
+                            .Stats.BytesReceivedFromClient}} &#8658; zazkia {{if .State.SendingToService}} &#8658;
+                            {{else}} &#8655; {{end}} {{ .Stats.BytesSentToService}} &#8658; service {{if
+                            .State.ReceivingFromService}}
+                            &#8658; {{else}} &#8655; {{end}} {{ .Stats.BytesReceivedFromService}} &#8658; zazkia {{if
+                            .State.SendingToClient}} &#8658; {{else}} &#8655; {{end}} {{ .Stats.BytesSentToClient}}
+                            &#8658; client
+                        </div>
                         </p>
                         {{ end }}
                     </ol>
@@ -94,14 +116,15 @@
         </div>
         <!-- links -->
         {{ if gt (len .) 0 }}
-        <a class="btn btn-default btn-primary " href="javascript:closeAllWithError() ">close all with error</a> {{ end }}
+        <a class="btn btn-default btn-primary " href="javascript:closeAllWithError() ">close all with error</a> {{ end
+        }}
     </div>
 
     </div>
     <!-- /.container -->
-    <script src="/static/jquery/jquery-3.1.1.min.js "></script>
-    <script src="/static/bootstrap-3.3.7-dist/js/bootstrap.min.js "></script>
-    <script src="/static/js/dashboard.js "></script>
+    <script src="/static/dashboard/jquery/jquery-3.1.1.min.js "></script>
+    <script src="/static/dashboard/bootstrap-3.3.7-dist/js/bootstrap.min.js "></script>
+    <script src="/static/dashboard/js/dashboard.js "></script>
 
 </body>
 
