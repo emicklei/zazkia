@@ -1,9 +1,9 @@
 module github.com/emicklei/zazkia
 
-go 1.22
+go 1.23
 
 require (
-	github.com/emicklei/go-restful-openapi/v2 v2.10.2
+	github.com/emicklei/go-restful-openapi/v2 v2.11.0
 	github.com/emicklei/go-restful/v3 v3.12.1
 	github.com/go-openapi/spec v0.21.0
 	github.com/russross/blackfriday v1.6.0

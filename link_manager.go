@@ -41,12 +41,6 @@ func (m *linkManager) add(l *link) {
 	m.links[l.ID] = l
 }
 
-func (m *linkManager) remove(l *link) {
-	m.mutex.Lock()
-	defer m.mutex.Unlock()
-	delete(m.links, l.ID)
-}
-
 func (m *linkManager) get(id int) *link {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
@@ -98,15 +92,15 @@ func (m *linkManager) APIGroups() []*APILinkGroup {
 	gm := map[string]*APILinkGroup{}
 	// TEMP
 	for _, each := range routeMgr.routes {
-		g, ok := gm[each.Label]
+		_, ok := gm[each.Label]
 		if !ok {
-			g = new(APILinkGroup)
+			g := new(APILinkGroup)
 			g.Route = each
 			gm[each.Label] = g
 		}
 	}
 	for _, each := range m.links {
-		g, _ := gm[each.route.Label]
+		g := gm[each.route.Label]
 		g.Links = append(g.Links, NewAPILink(each))
 	}
 	all := []*APILinkGroup{}

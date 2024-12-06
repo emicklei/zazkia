@@ -17,7 +17,6 @@ limitations under the License.
 package main
 
 import (
-	"io/ioutil"
 	"os"
 	"path"
 	"testing"
@@ -47,11 +46,10 @@ var routesData = `
 func TestReadRoutes(t *testing.T) {
 	dir := os.TempDir()
 	loc := path.Join(dir, "routes.json")
-	err := ioutil.WriteFile(loc, []byte(routesData), 0666)
+	err := os.WriteFile(loc, []byte(routesData), 0666)
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer os.RemoveAll(dir) // clean up
 	rs, err := readRoutes(loc)
 	if err != nil {
 		t.Fatal(err)

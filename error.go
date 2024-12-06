@@ -1,9 +1,9 @@
 package main
 
-import(
+import (
 	"errors"
 )
 
-var(
-	errBreak = errors.New("Simulate connection breakdown")
+var (
+	errBreak = errors.New("simulate connection breakdown")
 )
