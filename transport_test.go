@@ -59,3 +59,22 @@ func Test_transport_small_buffer(t *testing.T) {
 		t.Errorf("got %v want %v", got, want)
 	}
 }
+
+func Test_transport_verbose(t *testing.T) {
+	old := *oVerbose
+	*oVerbose = true
+	defer func() { *oVerbose = old }()
+	r := newTestRoute("r1")
+	l, cleanup := newTestLink(t, r)
+	defer cleanup()
+	reader := strings.NewReader("abcdefghij")
+	w := new(bytes.Buffer)
+	transport(l, w, reader, !AccessesService)
+}
+
+func Test_transport_read_error(t *testing.T) {
+	r := newTestRoute("r1")
+	l, cleanup := newTestLink(t, r)
+	defer cleanup()
+	transport(l, new(bytes.Buffer), strings.NewReader(""), AccessesService)
+}

@@ -17,21 +17,21 @@ limitations under the License.
 package main
 
 import (
+	"cmp"
 	"errors"
 	"log"
-	"sort"
+	"slices"
 	"sync"
 )
 
 type linkManager struct {
 	links map[int]*link
-	mutex *sync.Mutex
+	mutex sync.RWMutex
 }
 
 func newLinkManager() *linkManager {
 	return &linkManager{
 		links: map[int]*link{},
-		mutex: new(sync.Mutex),
 	}
 }
 
@@ -42,53 +42,66 @@ func (m *linkManager) add(l *link) {
 }
 
 func (m *linkManager) get(id int) *link {
-	m.mutex.Lock()
-	defer m.mutex.Unlock()
-	l, ok := m.links[id]
-	if !ok {
-		return nil
-	}
-	return l
+	m.mutex.RLock()
+	defer m.mutex.RUnlock()
+	return m.links[id]
 }
 
 func (m *linkManager) disconnectAndRemove(id int) error {
 	m.mutex.Lock()
-	defer m.mutex.Unlock()
 	link, ok := m.links[id]
 	if !ok {
+		m.mutex.Unlock()
 		return errors.New("no link with id")
 	}
+	delete(m.links, link.ID)
+	m.mutex.Unlock()
 	log.Printf("[%s] disconnecting link %d\n", link.route.Label, link.ID)
 	link.disconnect()
-	delete(m.links, link.ID)
 	return nil
 }
 
+// snapshotIDs returns the current set of link ids filtered by keep.
+// If keep is nil, all ids are returned.
+func (m *linkManager) snapshotIDs(keep func(*link) bool) []int {
+	m.mutex.RLock()
+	ids := make([]int, 0, len(m.links))
+	for id, l := range m.links {
+		if keep == nil || keep(l) {
+			ids = append(ids, id)
+		}
+	}
+	m.mutex.RUnlock()
+	return ids
+}
+
 func (m *linkManager) close() {
-	for _, each := range m.links {
-		m.disconnectAndRemove(each.ID)
+	for _, id := range m.snapshotIDs(nil) {
+		m.disconnectAndRemove(id)
 	}
 }
 
 func (m *linkManager) closeAllWithError() {
-	for _, each := range m.links {
-		if len(each.clientErrorString()) != 0 || len(each.serviceErrorString()) > 0 {
-			m.disconnectAndRemove(each.ID)
-		}
+	ids := m.snapshotIDs(func(l *link) bool {
+		return len(l.clientErrorString()) != 0 || len(l.serviceErrorString()) > 0
+	})
+	for _, id := range ids {
+		m.disconnectAndRemove(id)
 	}
 }
 
 func (m *linkManager) closeAllForRoute(label string) {
-	for _, each := range m.links {
-		if each.route.Label == label {
-			m.disconnectAndRemove(each.ID)
-		}
+	ids := m.snapshotIDs(func(l *link) bool {
+		return l.route.Label == label
+	})
+	for _, id := range ids {
+		m.disconnectAndRemove(id)
 	}
 }
 
 func (m *linkManager) APIGroups() []*APILinkGroup {
-	m.mutex.Lock()
-	defer m.mutex.Unlock()
+	m.mutex.RLock()
+	defer m.mutex.RUnlock()
 	gm := map[string]*APILinkGroup{}
 	// TEMP
 	for _, each := range routeMgr.routes {
@@ -105,47 +118,21 @@ func (m *linkManager) APIGroups() []*APILinkGroup {
 	}
 	all := []*APILinkGroup{}
 	for _, each := range gm {
-		sort.Sort(APILinkSorter(each.Links))
+		slices.SortFunc(each.Links, func(a, b APILink) int { return a.ID - b.ID })
 		all = append(all, each)
 	}
-	sort.Sort(APILinkGroupSorter(all))
+	slices.SortFunc(all, func(a, b *APILinkGroup) int { return cmp.Compare(a.Route.Label, b.Route.Label) })
 	return all
 }
 
 func (m *linkManager) APILinks(routeLabel string) (all []APILink) {
-	m.mutex.Lock()
-	defer m.mutex.Unlock()
+	m.mutex.RLock()
+	defer m.mutex.RUnlock()
 	for _, each := range m.links {
 		if each.route.Label == routeLabel {
 			all = append(all, NewAPILink(each))
 		}
 	}
-	sort.Sort(APILinkSorter(all))
+	slices.SortFunc(all, func(a, b APILink) int { return a.ID - b.ID })
 	return
-}
-
-type APILinkGroupSorter []*APILinkGroup
-
-func (s APILinkGroupSorter) Len() int {
-	return len(s)
-}
-func (s APILinkGroupSorter) Swap(i, j int) {
-	s[i], s[j] = s[j], s[i]
-}
-func (s APILinkGroupSorter) Less(i, j int) bool {
-	a, b := s[i], s[j]
-	return a.Route.Label < b.Route.Label
-}
-
-type APILinkSorter []APILink
-
-func (s APILinkSorter) Len() int {
-	return len(s)
-}
-func (s APILinkSorter) Swap(i, j int) {
-	s[i], s[j] = s[j], s[i]
-}
-func (s APILinkSorter) Less(i, j int) bool {
-	a, b := s[i], s[j]
-	return a.ID < b.ID
 }

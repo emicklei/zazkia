@@ -133,3 +133,133 @@ func setup() {
 	linkMgr = newLinkManager()
 	addRESTResources()
 }
+
+func TestLinkResource_Close(t *testing.T) {
+	setupWithRoute("r1")
+	r := newTestRoute("r1")
+	l, cleanup := newTestLink(t, r)
+	defer cleanup()
+	linkMgr.add(l)
+
+	w := doRequest("POST", "/links/"+itoa(l.ID)+"/close")
+	if w.Code != 200 {
+		t.Errorf("got %d", w.Code)
+	}
+}
+
+func TestLinkResource_Close_NotFound(t *testing.T) {
+	setup()
+	if w := doRequest("POST", "/links/9999/close"); w.Code != http.StatusNotFound {
+		t.Errorf("got %d", w.Code)
+	}
+	if w := doRequest("POST", "/links/abc/close"); w.Code != http.StatusBadRequest {
+		t.Errorf("got %d", w.Code)
+	}
+}
+
+func TestLinkResource_BreakResponse(t *testing.T) {
+	setup()
+	r := newTestRoute("r1")
+	l, cleanup := newTestLink(t, r)
+	defer cleanup()
+	linkMgr.add(l)
+	path := "/links/" + itoa(l.ID) + "/break-response"
+
+	if w := doRequest("POST", path+"?pct=50"); w.Code != 200 {
+		t.Errorf("got %d", w.Code)
+	}
+	if l.transport.BreakServiceResponse != 50 {
+		t.Errorf("got %d", l.transport.BreakServiceResponse)
+	}
+	if w := doRequest("POST", path+"?pct=50"); w.Code != 200 {
+		t.Errorf("got %d", w.Code)
+	}
+	if l.transport.BreakServiceResponse != 0 {
+		t.Error("expected reset to 0")
+	}
+	if w := doRequest("POST", path+"?pct=200"); w.Code != http.StatusBadRequest {
+		t.Errorf("got %d", w.Code)
+	}
+	if w := doRequest("POST", path+"?pct=abc"); w.Code != http.StatusBadRequest {
+		t.Errorf("got %d", w.Code)
+	}
+	if w := doRequest("POST", "/links/9999/break-response?pct=10"); w.Code != http.StatusNotFound {
+		t.Errorf("got %d", w.Code)
+	}
+}
+
+func TestLinkResource_DelayResponse_Invalid(t *testing.T) {
+	setup()
+	r := newTestRoute("r1")
+	l, cleanup := newTestLink(t, r)
+	defer cleanup()
+	linkMgr.add(l)
+	path := "/links/" + itoa(l.ID) + "/delay-response"
+
+	if w := doRequest("POST", path+"?ms=abc"); w.Code != http.StatusBadRequest {
+		t.Errorf("got %d", w.Code)
+	}
+	if w := doRequest("POST", "/links/9999/delay-response?ms=10"); w.Code != http.StatusNotFound {
+		t.Errorf("got %d", w.Code)
+	}
+}
+
+func TestLinkResource_ToggleReadsService(t *testing.T) {
+	setup()
+	r := newTestRoute("r1")
+	l, cleanup := newTestLink(t, r)
+	defer cleanup()
+	linkMgr.add(l)
+	if w := doRequest("POST", "/links/"+itoa(l.ID)+"/toggle-reads-service"); w.Code != 200 {
+		t.Errorf("got %d", w.Code)
+	}
+	if l.transport.ReceivingFromService {
+		t.Error("expected toggled off")
+	}
+	if w := doRequest("POST", "/links/9999/toggle-reads-service"); w.Code != http.StatusNotFound {
+		t.Errorf("got %d", w.Code)
+	}
+}
+
+func TestLinkResource_Stats(t *testing.T) {
+	setup()
+	r := newTestRoute("r1")
+	l, cleanup := newTestLink(t, r)
+	defer cleanup()
+	linkMgr.add(l)
+	if w := doRequest("GET", "/links/"+itoa(l.ID)+"/stats"); w.Code != 200 {
+		t.Errorf("got %d", w.Code)
+	}
+	if w := doRequest("GET", "/links/9999/stats"); w.Code != http.StatusNotFound {
+		t.Errorf("got %d", w.Code)
+	}
+}
+
+func TestLinkResource_GetLinksAndCloseAllWithError(t *testing.T) {
+	setupWithRoute("r1")
+	r := routeMgr.routes[0]
+	l, cleanup := newTestLink(t, r)
+	defer cleanup()
+	linkMgr.add(l)
+
+	if w := doRequest("GET", "/links/"); w.Code != 200 {
+		t.Errorf("got %d", w.Code)
+	}
+	if w := doRequest("POST", "/links/closeAllWithError"); w.Code != 200 {
+		t.Errorf("got %d", w.Code)
+	}
+}
+
+func TestLinkResource_ToggleNotFound(t *testing.T) {
+	setup()
+	for _, p := range []string{
+		"/links/9999/toggle-verbose",
+		"/links/9999/toggle-writes-service",
+		"/links/9999/toggle-writes-client",
+		"/links/9999/toggle-reads-client",
+	} {
+		if w := doRequest("POST", p); w.Code != http.StatusNotFound {
+			t.Errorf("%s: got %d", p, w.Code)
+		}
+	}
+}

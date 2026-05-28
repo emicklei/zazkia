@@ -19,6 +19,7 @@ package main
 import (
 	"os"
 	"path"
+	"strings"
 	"testing"
 )
 
@@ -79,5 +80,21 @@ func TestReadRoutes(t *testing.T) {
 		if each.Transport.ThrottleServiceResponse == 0 {
 			t.Error("missing ThrottleServiceResponse")
 		}
+	}
+}
+
+func TestRoute_TCPAndString(t *testing.T) {
+	r := newTestRoute("r1")
+	if r.tcp() != "localhost:1234" {
+		t.Errorf("got %q", r.tcp())
+	}
+	if !strings.Contains(r.String(), "r1") {
+		t.Errorf("got %q", r.String())
+	}
+}
+
+func TestReadRoutes_BadFile(t *testing.T) {
+	if _, err := readRoutes("/nonexistent/path/zazkia.json"); err == nil {
+		t.Error("expected error")
 	}
 }

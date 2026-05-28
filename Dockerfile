@@ -17,4 +17,4 @@ EXPOSE 5432
 # tomcat, jboss
 EXPOSE 8080
 
-CMD ./zazkia -v -f /data/zazkia-routes.json
+CMD ["./zazkia", "-v", "-f", "/data/zazkia-routes.json"]

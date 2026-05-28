@@ -31,15 +31,28 @@ func (t throttler) Write(link *link, w io.Writer, p parcel) (parcel, error) {
 		return p, nil
 	}
 	bytesPerSecond := link.transport.ThrottleServiceResponse
-	delayMicrosecondsPerByte := 1000 * 1000 / bytesPerSecond
-	if delayMicrosecondsPerByte == 0 {
-		return sender{}.Write(link, w, p)
+
+	// Write in chunks paced by a ticker. Aim for ~1ms granularity so we don't
+	// take a syscall per byte; fall back to per-byte pacing only when the
+	// configured rate is below 1000 B/s.
+	const targetTicksPerSecond = 1000
+	chunk := bytesPerSecond / targetTicksPerSecond
+	if chunk < 1 {
+		chunk = 1
 	}
-	throttler := time.NewTicker(time.Duration(delayMicrosecondsPerByte) * time.Microsecond)
-	defer throttler.Stop()
-	for _, each := range p.data[:p.read] {
-		<-throttler.C
-		_, err := w.Write([]byte{each})
+	tickInterval := time.Second / time.Duration(bytesPerSecond/chunk)
+	ticker := time.NewTicker(tickInterval)
+	defer ticker.Stop()
+
+	data := p.data[:p.read]
+	for offset := 0; offset < len(data); {
+		<-ticker.C
+		end := offset + chunk
+		if end > len(data) {
+			end = len(data)
+		}
+		n, err := w.Write(data[offset:end])
+		offset += n
 		if err != nil {
 			return p, err
 		}
